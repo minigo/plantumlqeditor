@@ -19,6 +19,8 @@ public:
     void accessing(const QString& name);
     void readFromSettings(QSettings& settings, const QString& section);
     void writeToSettings(QSettings& settings, const QString& section);
+    bool hasLastDocument();
+    void loadLastDocument();
 
 signals:
     void recentDocument(const QString& name);

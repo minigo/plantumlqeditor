@@ -1,0 +1,9 @@
+
+IDE:
+  - Download and install Qt Creator from http://www.qt.io/ide/
+  - Start Qt Creator and load the project file plantumlqeditor.pro
+  - Build and run
+
+Command line:
+  $ qmake plantumlqeditor.pro && make
+

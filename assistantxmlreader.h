@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QXmlStreamReader>
+#include <QString>
+#include <QRegExp>
 
 class Assistant;
 class AssistantXmlReader;
@@ -11,7 +13,7 @@ class AssistantItem : public QObject
 {
     Q_OBJECT
 public:
-    explicit AssistantItem(const QString& name, const QString& data, const QString& notes, const QString& icon_prefix, QObject *parent = 0);
+    explicit AssistantItem(const QString &name, const QString &data, const QString& notes, const QString& icon, QObject *parent = 0);
 
     const QString& name() const { return m_name; }
     const QString& data() const { return m_data; }
@@ -60,6 +62,7 @@ public:
     static void trimRight(QString& data);
 
 private:
+    void clear();
     void readRootElement();
     void skipUnknownElement();
     void readAssistantElement();

@@ -59,11 +59,11 @@ class FileCache : public QObject
 {
     Q_OBJECT
 public:
-    typedef std::function<AbstractFileCacheItem* (const QString&, // path
-                                                  const QString&, // key
-                                                  int, // cost
+    typedef std::function<AbstractFileCacheItem* (const QString&,   // path
+                                                  const QString&,   // key
+                                                  int,              // cost
                                                   const QDateTime&, // access time
-                                                  QObject* // parent
+                                                  QObject*          // parent
                                                   )>  ItemGenerator;
 
     FileCache(int maxCost = 0, QObject* parent = 0);

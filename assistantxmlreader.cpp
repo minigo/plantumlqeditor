@@ -1,12 +1,18 @@
 #include "assistantxmlreader.h"
+#include <settingsconstants.h>
+#include <utils.h>
+
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QSettings>
+#include <QCoreApplication>
 
 namespace {
-const QString ROOT_TAG = "assistants";
-const QString ASSISTANT_TAG = "assistant";
+  const QString ROOT_TAG = "assistants";
+  const QString ASSISTANT_TAG = "assistant";
+  const QString ASSISTANT_ICON_SUFIX = "-icons";
 }
 
 AssistantXmlReader::AssistantXmlReader(QObject *parent)
@@ -14,20 +20,58 @@ AssistantXmlReader::AssistantXmlReader(QObject *parent)
 {
 }
 
-bool AssistantXmlReader::readFile(const QString &path)
-{
+void AssistantXmlReader::clear() {
+    // clear all
     foreach(Assistant* assistant, m_items) {
         delete assistant;
     }
     m_items.clear();
+}
 
-    QDir dir = QFileInfo(path).absoluteDir();
-    if (dir.cd("icons")) {
-        m_iconDir = dir.absolutePath();
+bool AssistantXmlReader::readFile(const QString &path)
+{
+    clear();
+
+    QDir assistantDir = QFileInfo(ExpandEnvironmentVariables(path)).absoluteDir();
+    QString iconDir = QFileInfo(path).baseName() + ASSISTANT_ICON_SUFIX;
+
+    // set path to assistant icons
+
+    if (assistantDir.cd(iconDir)) {
+        // use subdir
+        m_iconDir = assistantDir.absolutePath();
     } else {
-        m_iconDir.clear();
+        qDebug() << "directory with assistant icons not found";
+
+        // TODO search or create dir (xml, curr, app)
+
+        QSettings settings;
+        if(settings.value(SETTINGS_PREF_PREVIEW+"/"+SETTINGS_USE_CACHE, false).toBool() == true){
+            qDebug() << "... using image cache";
+            m_iconDir = ExpandEnvironmentVariables(settings.value(SETTINGS_PREF_PREVIEW+"/"+SETTINGS_CUSTOM_CACHE_PATH, ".").toString());
+        }
+        else
+        {
+            // TODO: don't generate missing icons
+
+            QDir currentDir;
+            QDir appDir(QCoreApplication::applicationDirPath());
+
+            if(currentDir.mkdir(iconDir)){ // pwd
+                qDebug() << "... created icon directory in current dir";
+                currentDir.cd(iconDir);
+                m_iconDir = iconDir;
+            } else if(appDir.mkdir(iconDir)){ // exe
+                qDebug() << "... created icon directory in application dir";
+                appDir.cd(iconDir);
+                m_iconDir = iconDir;
+            } else {
+                qDebug() << "... using temp directory";
+                m_iconDir = QDir::tempPath();
+            }
+        }
     }
-    qDebug() << "using assistant:          " << path;
+    qDebug() << "using assistant file      " << path;
     qDebug() << "using assistant icon path:" << m_iconDir;
 
     QFile file(path);
@@ -66,8 +110,7 @@ bool AssistantXmlReader::readFile(const QString &path)
 
 QString AssistantXmlReader::removeWhiteSpace(const QString &data)
 {
-    if (data.isEmpty())
-        return data;
+    if (data.isEmpty()) return data;
 
     QStringList lines = data.split('\n');
 
@@ -218,10 +261,14 @@ void AssistantXmlReader::readAssistantItemElement(Assistant *assistant)
         }
     }
 
+    QString icon = assistant->name() + "__" + name;
+    icon.replace(QRegExp("[^a-zA-Z0-9-]"), QString("_"));
+    icon = m_iconDir + QDir::separator() + icon + ".svg";
+
     AssistantItem* item = new AssistantItem(name,
                                             data.join(QChar('\n')),
                                             notes.join(QChar('\n')),
-                                            m_iconDir + "/" + assistant->name(),
+                                            icon,
                                             assistant);
     assistant->append(item);
 }
@@ -246,15 +293,14 @@ QString AssistantXmlReader::readAssistantItemNotes()
     return notes;
 }
 
-AssistantItem::AssistantItem(const QString &name, const QString &data, const QString& notes, const QString& icon_prefix, QObject *parent)
+AssistantItem::AssistantItem(const QString &name, const QString &data, const QString& notes, const QString& icon, QObject *parent)
     : QObject(parent)
     , m_name(name)
     , m_data(data)
     , m_notes(notes)
-    , m_icon(icon_prefix + " - " + name + ".svg")
+    , m_icon(icon)
 {
 }
-
 
 Assistant::Assistant(const QString &name, QObject *parent)
     : QObject(parent)

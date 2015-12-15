@@ -2,6 +2,7 @@
 #include <QAction>
 #include <QSettings>
 #include <QSignalMapper>
+#include <QFileInfo>
 
 namespace {
 const QString SETTINGS_RECENT_DOCUMENTS_DOCUMENT_KEY = "document";
@@ -116,4 +117,15 @@ void RecentDocuments::onCleatActionTriggered()
 void RecentDocuments::onRecentDocumentsActionTriggered(int index)
 {
     emit recentDocument(m_documents.value(index));
+}
+
+bool RecentDocuments::hasLastDocument ()
+{
+  return !m_documents.isEmpty() && QFile::exists(m_documents.value(0));
+}
+
+void RecentDocuments::loadLastDocument ()
+{
+  if(hasLastDocument())
+    emit recentDocument(m_documents.value(0));
 }

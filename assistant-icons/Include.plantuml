@@ -1,0 +1,6 @@
+' Includes file!
+
+class Foo
+class Bar
+
+Foo -> Bar

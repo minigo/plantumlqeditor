@@ -151,6 +151,7 @@ void FileCache::clearFromDisk()
     qDebug() << "clear from disk:" << m_path;
 
     foreach (AbstractFileCacheItem* item, m_items) {
+        qDebug() << "remove item" << item->path();
         item->removeFileFromDisk();
         delete item;
     }
@@ -179,8 +180,15 @@ bool FileCache::updateFromDisk(const QString &path, ItemGenerator item_generator
         return false;
     }
 
+    QRegExp cacheFilename("[0-9a-z]{32}\\.(svg|png)");
+    cacheFilename.setCaseSensitivity(Qt::CaseInsensitive);
+
     foreach (QFileInfo info, dir.entryInfoList(QDir::Files)) {
         QString key = info.fileName();
+
+        // cache cached files only
+        if(!key.contains(cacheFilename)) continue;
+
         int cost = info.size();
         QDateTime date_time = info.lastRead();
         addItem(item_generator(path, key, cost, date_time, this));

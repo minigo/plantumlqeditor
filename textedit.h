@@ -1,8 +1,8 @@
 #ifndef TEXTEDIT_H
 #define TEXTEDIT_H
 
+#include <QObject>
 #include <QPlainTextEdit>
-
 
 class TextEdit : public QPlainTextEdit
 {
@@ -22,10 +22,17 @@ public:
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
 
+    void setFont(QFont &font);
+
+    bool isEmpty();
+
+    QString toPlainText();
+
 protected:
     void keyPressEvent(QKeyEvent *e);
     void paintEvent(QPaintEvent *e);
     void resizeEvent(QResizeEvent *e);
+    void wheelEvent(QWheelEvent *e); 
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);
@@ -35,6 +42,7 @@ private:
     int  _indentSize;
     bool _indentWithSpace;
     bool _autoIndent;
+    QFont _font;
 
     QWidget *lineNumberArea;
 };

@@ -1,0 +1,39 @@
+
+v2.0
+- Project converted to Qt5 (single instance mode removed)
+- Much more examples in Assistant.xml (incl. Graphviz dot, ditaa and JCCKit)
+- Autogeneration of icon files for examples in Assistant.xml
+- White background in preview widget
+- Added preview zoom functions:
+    - Ctrl + Mousewheel
+    - Ctrl + Alt + Mousewheel (slower)
+    - Ctrl + Shift + Mousewheel (faster)
+- Addes text editor zoom functions:
+    - Ctrl + Mousewheel
+    - Ctrl + Alt + Mousewheel (slower)
+    - Ctrl + Shift + Mousewheel (faster)
+- Text highlighter (alpha!)
+- Option to load last used file on start
+- Added file reload function [F6]
+- Enhanced export function for all supported PlantUML formats
+- Added support for environments variables in preferences dialog (ex. JRE_HOME):
+    - %VAR% on Windows
+    - ${VAR} on Linux, ~/ will be expanded to ${HOME}/
+- Add configuration for assistant info editor
+- Fixed ditaa backslash-end-of-line problem (\<nl> => \<space><nl>) before image generation
+- Automatically switch preview mode from SVG to PNG (Ditaa, JCCKit) or from PNG to SVG (Dot)
+- Automatically add/set @startuml and @enduml tags
+- Added new zoom functions (fit best, fit width, fit hight)
+- About dialog:
+    - Added Java and Graphviz version to about dialog
+    - Added links to about dialog
+- Added PlantUML parameters failfast2 and -nbthread auto
+- Added image scrolling with mousewheel (x and y with alt key)
+- Rearranged preferences dialog
+- New conf file sections/format :(
+- Added replace all existing code on double click on an assistant icon, if the cursor is at the first or last position (for easy testing)
+- "New" assistant icon directory:
+    1. my_assistant.xml => my_assistant-icons or
+    2. the image cache directory
+    3. a real tmp. directory
+- Added Variables USER, DATE, TIME, NOW, NOWS, NOWL, FILE, DIR, PATH. Write %<Var>% or ${<Var>}!

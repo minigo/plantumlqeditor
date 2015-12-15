@@ -1,3 +1,13 @@
+.directory
+/build
+Makefile*
+*~
+*.sh
+*.bat
+plantumlqeditor
+*.pro.user.*
 *.user
 *-build-*
 thirdparty/gmock-*
+.kdev4/
+*.kdev4

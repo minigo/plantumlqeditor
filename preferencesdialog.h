@@ -1,10 +1,11 @@
 #ifndef PREFERENCESDIALOG_H
 #define PREFERENCESDIALOG_H
 
+#include <QObject>
 #include <QDialog>
 
 namespace Ui {
-class PreferencesDialog;
+  class PreferencesDialog;
 }
 
 class FileCache;

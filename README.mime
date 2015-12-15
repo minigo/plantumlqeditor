@@ -28,10 +28,10 @@ $ xdg-mime install --mode user plantumlqeditor-mime.xml
 Register the icons:
 
 ~~~~~
-$ xdg-icon-resource install --context mimetypes --mode user --size 22 icon22.png application-x-plantumlqeditor
-$ xdg-icon-resource install --context mimetypes --mode user --size 48 icon48.png application-x-plantumlqeditor
-$ xdg-icon-resource install --context mimetypes --mode user --size 32 icon32.png application-x-plantumlqeditor
-$ xdg-icon-resource install --context mimetypes --mode user --size 64 icon64.png application-x-plantumlqeditor
+$ xdg-icon-resource install --context mimetypes --mode user --size 22 resources/icon22.png application-x-plantumlqeditor
+$ xdg-icon-resource install --context mimetypes --mode user --size 48 resources/icon48.png application-x-plantumlqeditor
+$ xdg-icon-resource install --context mimetypes --mode user --size 32 resources/icon32.png application-x-plantumlqeditor
+$ xdg-icon-resource install --context mimetypes --mode user --size 64 resources/icon64.png application-x-plantumlqeditor
 ~~~~~
 
 Register the _.desktop_ file:

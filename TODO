@@ -1,0 +1,5 @@
+- code highlighting (see -pattern parameter)
+- kill generator process if pending (ditaa)
+- portable mode (store config file in app dir)
+- single window mode with tabs
+- add option for config file (see -config parameter)
