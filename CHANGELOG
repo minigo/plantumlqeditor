@@ -3,7 +3,7 @@ v2.0
 - Project converted to Qt5 (single instance mode removed)
 - Much more examples in Assistant.xml (incl. Graphviz dot, ditaa and JCCKit)
 - Autogeneration of icon files for examples in Assistant.xml
-- White background in preview widget
+- White background in old preview widget
 - Added preview zoom functions:
     - Ctrl + Mousewheel
     - Ctrl + Alt + Mousewheel (slower)
@@ -37,3 +37,5 @@ v2.0
     2. the image cache directory
     3. a real tmp. directory
 - Added Variables USER, DATE, TIME, NOW, NOWS, NOWL, FILE, DIR, PATH. Write %<Var>% or ${<Var>}!
+- Added new preview widget based on WebKit (better SVG quality)
+- Added option -o/-old-preview to use old preview widget

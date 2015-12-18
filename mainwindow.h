@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow ( QWidget* parent = 0 );
+    explicit MainWindow ( bool oldPreview = false, QWidget* parent = 0 );
     ~MainWindow();
 
     void openDocument ( const QString& path );
@@ -120,6 +120,7 @@ private:
     QString m_assistantXmlPath;
     QList<QListWidget*> m_assistantWidgets;
 
+    bool m_oldPreview;
     bool m_useLastDocument;
     bool m_useCustomJava;
     bool m_useCustomPlantUml;

@@ -33,6 +33,7 @@
 *.tab text
 *.tsv text
 *.sql text
+*.svg text
 *.xml text
 
 # Graphics
@@ -52,8 +53,6 @@
 *.TIFF binary
 *.ico binary
 *.ICO binary
-*.svg binary
-*.SVG binary
 *.eps binary
 *.EPS binary
 

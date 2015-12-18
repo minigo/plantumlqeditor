@@ -277,13 +277,14 @@ class HighLighter:
             format_error.setFontStrikeOut(true);
             format_error.setFontItalic(true);
             format_error.setForeground(Qt::red);
-        };
+        }
 
         ~ HighLighter()
-        {};
+        {}
 
         void highlightBlock(const QString &text)
         {
+            //return;
             qDebug() << codeType << "###" << text;
 
             if(text.size() == 0 || text.contains(REGEX_EMPTY)) return;

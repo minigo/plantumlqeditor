@@ -39,8 +39,9 @@ namespace {
     const QRegExp IMAGE_SVG_ONLY("graph\\s+\\w+\\s*[{]");
 } // namespace {}
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(bool oldPreview, QWidget* parent)
     : QMainWindow(parent)
+    , m_oldPreview(oldPreview)
     , m_hasValidPaths(false)
     , m_process(0)
     , m_currentImageFormat(SvgFormat)
@@ -62,29 +63,27 @@ MainWindow::MainWindow(QWidget* parent)
     m_imageFormatNames[SvgFormat] = "svg";
     m_imageFormatNames[PngFormat] = "png";
 
-    switch(2) {
-        case 1: // original preview widget
-            qDebug() << "Init. old PreviewWidgetSvg!";
+    if(m_oldPreview) {
+        // original preview widget
+        qDebug() << "Init. old PreviewWidgetSvg!";
 
-            m_previewWidget = new PreviewWidgetSvg(this);
+        m_previewWidget = new PreviewWidgetSvg(this);
 
-            m_previewWidgetScrollArea = new QScrollArea;
-            m_previewWidgetScrollArea->setWidget(m_previewWidget);
-            m_previewWidgetScrollArea->setAlignment(Qt::AlignCenter);
-            m_previewWidgetScrollArea->setWidgetResizable(true);
-            setCentralWidget(m_previewWidgetScrollArea);
+        m_previewWidgetScrollArea = new QScrollArea;
+        m_previewWidgetScrollArea->setWidget(m_previewWidget);
+        m_previewWidgetScrollArea->setAlignment(Qt::AlignCenter);
+        m_previewWidgetScrollArea->setWidgetResizable(true);
+        setCentralWidget(m_previewWidgetScrollArea);
 
-            m_previewWidget->setScrollArea(m_previewWidgetScrollArea); // a1e
+        m_previewWidget->setScrollArea(m_previewWidgetScrollArea);
+    }
+    else {
+        // with QWebView as preview widget
+        qDebug() << "Init. new PreviewWidgetWeb!";
 
-            break;
-        case 2: // with QWebView as preview widget
-            qDebug() << "Init. new PreviewWidgetWeb!";
+        m_previewWidget = new PreviewWidgetWeb(this);
 
-            m_previewWidget = new PreviewWidgetWeb(this);
-
-            setCentralWidget(m_previewWidget);
-
-            break;
+        setCentralWidget(m_previewWidget);
     }
 
     createDockWindows();

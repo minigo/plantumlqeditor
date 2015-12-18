@@ -1,5 +1,6 @@
 # PlantUML QEditor 2.x
 
+Copyright (c) 2012 Ionutz Borcoman
 Copyright (c) 2016 J. Albers
 
 At a glance:

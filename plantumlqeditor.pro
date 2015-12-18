@@ -18,23 +18,23 @@ QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
 
 #-------------------------------------------------
 
-win32 {
-    release: DESTDIR = build/release/win
-    debug:   DESTDIR = build/debug/win
-}
-unix {
-    release: DESTDIR = build/release/unix
-    debug:   DESTDIR = build/debug/unix
-}
+#win32 {
+#    release: DESTDIR = build/release/win
+#    debug:   DESTDIR = build/debug/win
+#}
+#unix {
+#    release: DESTDIR = build/release/unix
+#    debug:   DESTDIR = build/debug/unix
+#}
 
 QT += core gui svg widgets webkitwidgets
 
 CONFIG += static
 
-OBJECTS_DIR = $$DESTDIR/.obj
-MOC_DIR     = $$DESTDIR/.moc
-RCC_DIR     = $$DESTDIR/.qrc
-UI_DIR      = $$DESTDIR/.ui
+#OBJECTS_DIR = $$DESTDIR/.obj
+#MOC_DIR     = $$DESTDIR/.moc
+#RCC_DIR     = $$DESTDIR/.qrc
+#UI_DIR      = $$DESTDIR/.ui
 
 #CONFIG += debug_and_release
 #CONFIG += debug
