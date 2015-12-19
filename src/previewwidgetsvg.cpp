@@ -1,6 +1,7 @@
-﻿#include "previewwidgetsvg.h"
-#include "previewwidgetweb.h"
-#include "mainwindow.h"
+﻿#include "src/previewwidgetsvg.h"
+
+#include "src/previewwidgetweb.h"
+#include "src/mainwindow.h"
 
 #include <QDebug>
 #include <QPainter>

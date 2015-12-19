@@ -1,4 +1,5 @@
-﻿#include "utils.h"
+﻿#include "src/utils.h"
+
 #include <QProcessEnvironment>
 #include <QDir>
 #include <QRegExp>

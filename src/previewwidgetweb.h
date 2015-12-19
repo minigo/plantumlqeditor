@@ -1,8 +1,8 @@
 #ifndef PREVIEWWIDGETWEB_H
 #define PREVIEWWIDGETWEB_H
 
-#include <previewwidget.h>
-#include <webview.h>
+#include <src/previewwidget.h>
+#include <src/webview.h>
 
 #include <QObject>
 #include <QWidget>

@@ -1,7 +1,7 @@
 #ifndef PREVIEWWIDGETSVG_H
 #define PREVIEWWIDGETSVG_H
 
-#include <previewwidget.h>
+#include <src/previewwidget.h>
 
 #include <QObject>
 #include <QWidget>
