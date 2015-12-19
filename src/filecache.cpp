@@ -1,4 +1,5 @@
-#include "filecache.h"
+#include "src/filecache.h"
+
 #include <QDir>
 #include <QDebug>
 

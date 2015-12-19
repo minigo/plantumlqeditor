@@ -1,9 +1,12 @@
-#include "preferencesdialog.h"
+﻿#include "src/preferencesdialog.h"
+
+#include "src/utils.h"
+#include "src/filecache.h"
+#include "src/settingsconstants.h"
+
+// generated
 #include "ui_preferencesdialog.h"
 
-#include "utils.h"
-#include "filecache.h"
-#include "settingsconstants.h"
 #include <QSettings>
 #include <QFileDialog>
 #include <QDesktopServices>

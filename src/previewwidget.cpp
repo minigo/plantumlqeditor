@@ -1,4 +1,4 @@
-#include "previewwidget.h"
+#include "src/previewwidget.h"
 
 #include <QDebug>
 #include <QPainter>

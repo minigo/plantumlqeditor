@@ -1,4 +1,5 @@
-#include "recentdocuments.h"
+﻿#include "src/recentdocuments.h"
+
 #include <QAction>
 #include <QSettings>
 #include <QSignalMapper>

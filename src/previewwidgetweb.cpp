@@ -1,6 +1,6 @@
-﻿#include "previewwidgetweb.h"
+﻿#include "src/previewwidgetweb.h"
 
-#include "webview.h"
+#include "src/webview.h"
 
 #include <QDebug>
 #include <QImage>

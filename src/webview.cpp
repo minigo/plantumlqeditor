@@ -1,10 +1,10 @@
-#include "webview.h"
+﻿#include "src/webview.h"
+
+#include "src/mainwindow.h"
 
 #include <QDebug>
 #include <QWheelEvent>
 
-#include "mainwindow.h"
-#include "webview.h"
 
 /**
  * A subclass of QWebView to catch the mouse wheel events.

@@ -1,14 +1,15 @@
-﻿#include "mainwindow.h"
-#include "previewwidgetsvg.h"
-#include "previewwidgetweb.h"
-#include "preferencesdialog.h"
-#include "assistantxmlreader.h"
-#include "settingsconstants.h"
-#include "filecache.h"
-#include "recentdocuments.h"
-#include "utils.h"
-#include "textedit.h"
-#include "highlighter.cpp"
+﻿#include "src/mainwindow.h"
+
+#include "src/previewwidgetsvg.h"
+#include "src/previewwidgetweb.h"
+#include "src/preferencesdialog.h"
+#include "src/assistantxmlreader.h"
+#include "src/settingsconstants.h"
+#include "src/filecache.h"
+#include "src/recentdocuments.h"
+#include "src/utils.h"
+#include "src/textedit.h"
+#include "src/highlighter.cpp"
 
 #include <QFile>
 #include <QFileInfo>

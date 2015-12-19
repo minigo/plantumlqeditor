@@ -1,6 +1,7 @@
-#include "assistantxmlreader.h"
-#include <settingsconstants.h>
-#include <utils.h>
+﻿#include "src/assistantxmlreader.h"
+
+#include "src/settingsconstants.h"
+#include "src/utils.h"
 
 #include <QFileInfo>
 #include <QFile>

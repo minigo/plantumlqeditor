@@ -47,36 +47,36 @@ win32:QMAKE_DISTCLEAN += /s /f /q $$DESTDIR && rd /s /q $$DESTDIR
 #-------------------------------------------------
 
 SOURCES += \
-    main.cpp\
-    mainwindow.cpp \
-    recentdocuments.cpp \
-    preferencesdialog.cpp \
-    assistantxmlreader.cpp \
-    previewwidget.cpp \
-    previewwidgetsvg.cpp \
-    previewwidgetweb.cpp \
-    textedit.cpp \
-    highlighter.cpp \
-    filecache.cpp \
-    utils.cpp \
-    webview.cpp
+    src/main.cpp\
+    src/mainwindow.cpp \
+    src/recentdocuments.cpp \
+    src/preferencesdialog.cpp \
+    src/assistantxmlreader.cpp \
+    src/previewwidget.cpp \
+    src/previewwidgetsvg.cpp \
+    src/previewwidgetweb.cpp \
+    src/textedit.cpp \
+    src/highlighter.cpp \
+    src/filecache.cpp \
+    src/utils.cpp \
+    src/webview.cpp
 
 HEADERS += \
-    mainwindow.h \
-    recentdocuments.h \
-    settingsconstants.h \
-    preferencesdialog.h \
-    assistantxmlreader.h \
-    previewwidget.h \
-    previewwidgetsvg.h \
-    previewwidgetweb.h \
-    textedit.h \
-    filecache.h \
-    utils.h \
-    webview.h
+    src/mainwindow.h \
+    src/recentdocuments.h \
+    src/settingsconstants.h \
+    src/preferencesdialog.h \
+    src/assistantxmlreader.h \
+    src/previewwidget.h \
+    src/previewwidgetsvg.h \
+    src/previewwidgetweb.h \
+    src/textedit.h \
+    src/filecache.h \
+    src/utils.h \
+    src/webview.h
 
 FORMS += \
-    preferencesdialog.ui
+    src/preferencesdialog.ui
 
 OTHER_FILES += \
     assistant.xml \

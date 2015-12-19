@@ -3,7 +3,7 @@
 
 #include <QWebView>
 
-#include <previewwidgetweb.h>
+#include <src/previewwidgetweb.h>
 
 class QWebView;
 class PreviewWidgetWeb;

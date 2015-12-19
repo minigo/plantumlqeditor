@@ -1,9 +1,10 @@
-﻿#include <QFileInfo>
+﻿#include "src/mainwindow.h"
+
+#include <QFileInfo>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QApplication>
 #include <QTextStream>
-#include "mainwindow.h"
 
 namespace {
   const char* APPLICATION_NAME    = "PlantUML QEditor";
@@ -22,8 +23,7 @@ namespace {
     QTextStream(stdout) << qPrintable(QString("\n"
                                               "    %1  %2        Display this help\n"
                                               "    %3  %4 Use old preview\n"
-                                              "\n"
-                                              "    If FILE is provided, load it on start.")
+                                              "\n")
                                               .arg(OPTION_HELP_SHORT)
                                               .arg(OPTION_HELP_LONG)
                                               .arg(OPTION_OLD_PREVIEW_SHORT)
