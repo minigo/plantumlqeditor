@@ -1,4 +1,4 @@
-#include "utils.h"
+﻿#include "utils.h"
 #include <QProcessEnvironment>
 #include <QDir>
 #include <QRegExp>
@@ -29,7 +29,7 @@ QString ExpandEnvironmentVariables(QString withVariables)
 
     QString withoutVariables = withVariables;
 
-    qDebug() << "ENV  IN" << withoutVariables;
+    qDebug() << "ENV <" << withoutVariables;
 
     // *nix and Windows style
     {
@@ -69,9 +69,9 @@ QString ExpandEnvironmentVariables(QString withVariables)
             withoutVariables  = withoutVariables.replace(envVar, env.value(varName));
             pos += envVars.matchedLength();
 
-            qDebug() << "ENV" << envVar << "->" << varName << "=>" << env.value(varName);
+            qDebug() << "ENV =" << envVar << "->" << varName << "=>" << env.value(varName);
         }
     }
-    qDebug() << "ENV OUT" << withoutVariables;
+    qDebug() << "ENV >" << withoutVariables;
     return withoutVariables;
 }

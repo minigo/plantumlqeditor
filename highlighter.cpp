@@ -1,4 +1,4 @@
-#include <QtGui>
+﻿#include <QtGui>
 #include <QColor>
 
 /**
@@ -284,8 +284,7 @@ class HighLighter:
 
         void highlightBlock(const QString &text)
         {
-            //return;
-            qDebug() << codeType << "###" << text;
+            qDebug() << codeType << ':' << text;
 
             if(text.size() == 0 || text.contains(REGEX_EMPTY)) return;
 

@@ -1,4 +1,4 @@
-#include "previewwidgetweb.h"
+﻿#include "previewwidgetweb.h"
 
 #include "webview.h"
 
@@ -6,8 +6,6 @@
 #include <QImage>
 #include <QRegExp>
 #include <QVBoxLayout>
-
-#define DEBUG_SIZE() qDebug() << "WebView" << m_webView->width() << "x" << m_webView->height();
 
 static const QString HTML_BEGIN = "<html>"
                                   "<head>"
@@ -143,9 +141,6 @@ void PreviewWidgetWeb::load(const QByteArray &data)
         }
     }
 
-    qDebug() << "=> Width =" << m_width;
-    qDebug() << "=> Height =" << m_height;
-
     // make the picture a little larger to prevent scrollbars => smaller scale factor
     {
         if(m_width < 150)
@@ -164,32 +159,8 @@ void PreviewWidgetWeb::load(const QByteArray &data)
     update();
 }
 
-// TODO: Remove!
-/*
-void PreviewWidgetWeb::loadFinished(bool done) {
-    qDebug() << "loadFinished " << done;
-
-    // see http://stackoverflow.duapp.com/questions/6002621/qwebview-undersampled-svg-rendering
-
-//    QWebElementCollection col = m_webView->page()->mainFrame()->findAllElements("img");
-//    foreach (QWebElement el, col) {
-        //QImage image(el.geometry().width(), el.geometry().height(), QImage::Format_ARGB32);
-        QImage image(m_width, m_height, QImage::Format_ARGB32);
-        QPainter painter(&image);
-        painter.begin(&image);
-        m_webView->render(&painter);
-        painter.end();
-        qDebug() << "SIZE: " << image.width() << ";" << image.height() << " = " << image.isNull();
-
-        // TODO: TESTING => Works, but the image is too big (2000x1000)!
-        image.save("/tmp/IMAGE", "PNG");
-//    }
-}
-*/
-
 void PreviewWidgetWeb::setZoomScale(int zoom_scale)
 {
-    qDebug() << "zoomScale" << zoom_scale;
     if (m_zoomScale != zoom_scale) {
         m_zoomScale = zoom_scale;
         zoomImage();
@@ -201,8 +172,6 @@ void PreviewWidgetWeb::setZoomScale(int zoom_scale)
 void PreviewWidgetWeb::zoomFitBest()
 {
     zoomOriginal();
-
-    DEBUG_SIZE();
 
     float zW = (float)m_webView->width()  / m_width;
     float zH = (float)m_webView->height() / m_height;
@@ -216,8 +185,6 @@ void PreviewWidgetWeb::zoomFitWidth()
 {
     zoomOriginal();
 
-    DEBUG_SIZE();
-
     float zW = (float)m_webView->width() / m_width;
 
     int zoomScale = zW * 100;
@@ -228,8 +195,6 @@ void PreviewWidgetWeb::zoomFitWidth()
 void PreviewWidgetWeb::zoomFitHeight()
 {
     zoomOriginal();
-
-    DEBUG_SIZE();
 
     float zH = (float)m_webView->height() / m_height;
 

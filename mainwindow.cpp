@@ -65,7 +65,6 @@ MainWindow::MainWindow(bool oldPreview, QWidget* parent)
 
     if(m_oldPreview) {
         // original preview widget
-        qDebug() << "Init. old PreviewWidgetSvg!";
 
         m_previewWidget = new PreviewWidgetSvg(this);
 
@@ -79,7 +78,6 @@ MainWindow::MainWindow(bool oldPreview, QWidget* parent)
     }
     else {
         // with QWebView as preview widget
-        qDebug() << "Init. new PreviewWidgetWeb!";
 
         m_previewWidget = new PreviewWidgetWeb(this);
 
@@ -100,14 +98,6 @@ MainWindow::MainWindow(bool oldPreview, QWidget* parent)
             this, SLOT(onAssistantItemInsert(QWidget*)));
 
     readSettings();
-
-//s     QtSingleApplication* single_app = qobject_cast<QtSingleApplication*>(qApp);
-//s
-//s     if (single_app) {
-//s         single_app->setActivationWindow(this);
-//s         connect(single_app, SIGNAL(messageReceived(QString)),
-//s                 this, SLOT(onSingleApplicationReceivedMessage(QString)));
-//s     }
 }
 
 MainWindow::~MainWindow() {
@@ -644,21 +634,6 @@ void MainWindow::onAssistanItemDoubleClicked(QListWidgetItem* item) {
     m_editor->setFocus(); // force focus to move to the editor
 }
 
-//s void MainWindow::onSingleApplicationReceivedMessage(const QString& message) {
-//s     // the message is a file to open
-//s     QtSingleApplication* single_app = qobject_cast<QtSingleApplication*>(qApp);
-//s
-//s     if (single_app) {
-//s         single_app->activateWindow();
-//s         qDebug() << "single instance activated";
-//s     }
-//s
-//s     if (!message.isEmpty()) {
-//s         qDebug() << "received request to open " << message << "from another instance";
-//s         openDocument(message);
-//s     }
-//s }
-
 void MainWindow::onAssistantFocus() {
     focusAssistant();
 }
@@ -1172,8 +1147,6 @@ void MainWindow::exportImage(const QString& filename) {
         tmpFilename = QFileDialog::getSaveFileName(this,
                    tr("Select where to export the image"),
                    dir,
-//                   "PNG Image (*.png);;SVG Image (*.svg);;HTML (*.html);;All Files (*.*)"
-//                   "Current format (*.png *.svg);;All Files (*.*)"
                    filter.join(";;")
                    );
 

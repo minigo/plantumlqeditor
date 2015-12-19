@@ -1,7 +1,8 @@
-#include <QFileInfo>
+﻿#include <QFileInfo>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QApplication>
+#include <QTextStream>
 #include "mainwindow.h"
 
 namespace {
@@ -11,24 +12,22 @@ namespace {
   const char* ORGANIZATION_DOMAIN = "borco.net";
   // => conf file: ~/.config/Ionutz Borcoman/PlantUML QEditor.conf
 
-  const char* OPTION_HELP_SHORT =       "-h";
+  const char* OPTION_HELP_SHORT        = "-h";
   const char* OPTION_HELP_LONG         = "--help";
   const char* OPTION_OLD_PREVIEW_SHORT = "-o";
   const char* OPTION_OLD_PREVIEW_LONG  = "--old-preview";
 
   void displayHelp(const char* app_name) {
-    qDebug() << qPrintable(QString("Usage: %1 [options] [FILE]").arg(QFileInfo(app_name).fileName()));
-    qDebug() << qPrintable(QString("\n"
-                                   "%1  %2    Display this help\n"
-                                   "%3  %4    Use old preview\n"
-                                   "\n"
-                                   "If FILE is provided, load it on start. If running in single\n"
-                                   "instance mode, the instance is signaled to load FILE.\n")
-                           .arg(OPTION_HELP_SHORT)
-                           .arg(OPTION_HELP_LONG)
-                           .arg(OPTION_OLD_PREVIEW_SHORT)
-                           .arg(OPTION_OLD_PREVIEW_LONG)
-                          );
+    QTextStream(stdout) << qPrintable(QString("Usage: %1 [options] [FILE]").arg(QFileInfo(app_name).fileName()));
+    QTextStream(stdout) << qPrintable(QString("\n"
+                                              "    %1  %2        Display this help\n"
+                                              "    %3  %4 Use old preview\n"
+                                              "\n"
+                                              "    If FILE is provided, load it on start.")
+                                              .arg(OPTION_HELP_SHORT)
+                                              .arg(OPTION_HELP_LONG)
+                                              .arg(OPTION_OLD_PREVIEW_SHORT)
+                                              .arg(OPTION_OLD_PREVIEW_LONG) );
   }
 } // Namespace
 
@@ -66,8 +65,7 @@ int main(int argc, char *argv[])
     if (open_document_path.isEmpty()) {
       if(window.useLastDocument()) {
         window.openLastDocument();
-      }
-      else {
+      } else {
         window.newDocument();
       }
     } else {        

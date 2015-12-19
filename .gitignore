@@ -7,7 +7,10 @@ Makefile*
 plantumlqeditor
 *.pro.user.*
 *.user
-*-build-*
-thirdparty/gmock-*
+*_plugin_import.cpp
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.o
 .kdev4/
 *.kdev4

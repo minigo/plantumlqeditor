@@ -1,4 +1,4 @@
-#include "previewwidgetsvg.h"
+﻿#include "previewwidgetsvg.h"
 #include "previewwidgetweb.h"
 #include "mainwindow.h"
 
@@ -39,7 +39,6 @@ void PreviewWidgetSvg::load(const QByteArray &data)
 
 void PreviewWidgetSvg::setZoomScale(int zoom_scale)
 {
-    qDebug() << "zoomScale" << zoom_scale;
     if (m_zoomScale != zoom_scale) {
         m_zoomScale = zoom_scale;
         zoomImage();
