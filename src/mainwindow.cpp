@@ -447,8 +447,8 @@ void MainWindow::refresh(bool forced) {
     arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
               << QString("-t%1").arg(m_imageFormatNames[m_currentImageFormat])
               << "-word"                // don't use the optional filename
-              << "-fastfail2"           // a1e
-              << "-nbthread" << "auto";  // a1e
+              << "-fastfail2"
+              << "-nbthread" << "auto";
 
     if (m_useCustomGraphviz) {
         arguments << "-graphvizdot" << m_graphvizPath.absoluteFilePath();
@@ -648,13 +648,13 @@ void MainWindow::onAssistantItemInsert(QWidget* widget) {
 }
 
 void MainWindow::onNextAssistant() {
-    if(m_assistantToolBox->count() <= 0) return; //a1e
+    if(m_assistantToolBox->count() <= 0) return;
 
     m_assistantToolBox->setCurrentIndex((m_assistantToolBox->currentIndex() + 1) % m_assistantToolBox->count());
 }
 
 void MainWindow::onPrevAssistant() {
-    if(m_assistantToolBox->count() <= 0) return; //a1e
+    if(m_assistantToolBox->count() <= 0) return;
 
     const int count = m_assistantToolBox->count();
     m_assistantToolBox->setCurrentIndex((count + m_assistantToolBox->currentIndex() - 1) % count);
@@ -1759,7 +1759,7 @@ void MainWindow::insertAssistantCode(const QString& code) {
     QTextCursor cursor = m_editor->textCursor();
     if(cursor.isNull()) return;
 
-    // change code by hand, because the undo/redo buffer
+    // change code by "hand", because the undo/redo buffer
 
     QString src = m_editor->document()->toPlainText(); // w/o ditaa fix!!!
     int start = cursor.selectionStart();
@@ -1824,17 +1824,17 @@ QString MainWindow::prepareCode(const QString& codeBefore, const bool addTags)
     if(codeBefore.contains("salt")) {
         start = "@startsalt";
         end   = "@endsalt";
-        regex = new QRegExp("^salt([^\\n\\r]+)?");
+        regex = new QRegExp("^salt([^\\n\\r]+)?[\\r\\n]?");
     }
     else if(codeBefore.contains("ditaa")) {
         start = "@startditaa";
         end   = "@endditaa";
-        regex = new QRegExp("^ditaa([^\\n\\r]+)?");
+        regex = new QRegExp("^ditaa([^\\n\\r]+)?[\\r\\n]?");
     }
     else if(codeBefore.contains("jcckit")) {
         start = "@startjcckit";
         end   = "@endjcckit";
-        regex = new QRegExp("^jcckit([^\\n\\r]+)?");
+        regex = new QRegExp("^jcckit([^\\n\\r]+)?[\\r\\n]?");
     }
     else if(codeBefore.contains(QRegExp("(di)?graph\\s+\\w+"))) {
         start = "@startdot";
