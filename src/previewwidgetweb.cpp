@@ -7,8 +7,11 @@
 #include <QRegExp>
 #include <QVBoxLayout>
 
-static const QString HTML_BEGIN = "<html>"
+static const QString HTML_BEGIN = "<!DOCTYPE html>"
+                                  "<html>"
                                   "<head>"
+                                  "  <meta charset=\"utf-8\">"
+                                  "  <title>PlantUML QEditor Preview Widget</title>"
                                   "  <style>"
                                   "    html, body, table, td {"
                                   "      height:  100%;"
@@ -54,8 +57,6 @@ PreviewWidgetWeb::PreviewWidgetWeb(QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(m_webView);
     setLayout(layout);
-
-//    connect(m_webView, SIGNAL(loadFinished(bool)), this, SLOT(loadFinished(bool)));
 }
 
 // TODO: Remove!
@@ -83,7 +84,7 @@ void PreviewWidgetWeb::load(const QByteArray &data)
 
         QString svg = data;
         svg.replace(QRegExp("<[?]xml[^>]+>"), "");
-        content = svg.toLatin1();
+        content = svg.toUtf8();
 
         /*{
             QFile file("/tmp/svg.xml"); // DEBUG
