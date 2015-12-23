@@ -14,7 +14,7 @@ QString cacheSizeToString(int size)
  * @param withVariables
  * @return withoutVariables
  */
-QString ExpandEnvironmentVariables(const QString pWithVariables, bool pIsPath)
+QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath)
 {
     if(pWithVariables.isEmpty()) return pWithVariables;
 

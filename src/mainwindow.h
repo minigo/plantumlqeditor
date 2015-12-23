@@ -38,7 +38,7 @@ public:
     bool useLastDocument();
     void openLastDocument();
     bool generateImage( const QString& filename, const QString& format, const QString& src = NULL);
-    bool switchPreviewModeIfNeeded(); //a1e
+    bool switchPreviewModeIfNeeded();
 public slots:
     void newDocument();
 
@@ -152,7 +152,7 @@ private:
     ImageFormat m_currentImageFormat;
     QTimer* m_autoRefreshTimer;
     bool m_needsRefresh;    
-    bool m_refreshing; //a1e - skip refresh during refreshing
+    bool m_refreshing; // skip refresh during refreshing
 
     TextEdit* m_editor;
     // the main image widget, which renders to svg or png

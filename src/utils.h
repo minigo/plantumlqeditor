@@ -15,7 +15,7 @@ static QRegExp s_reMatches("([$][{]([a-zA-Z0-9_]+)[}]|%([a-zA-Z0-9_()]+)%)");
 static QRegExp s_reCurentDir("^([.])([/\\\\])");
 static QRegExp s_reHome("^(~)([/\\\\])");
 
-QString ExpandEnvironmentVariables(const QString pWithVariables, bool pIsPath = true);
+QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath = true);
 
 QString cacheSizeToString(int size);
 
