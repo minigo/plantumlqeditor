@@ -1,4 +1,4 @@
-#include <QKeyEvent>
+﻿#include <QKeyEvent>
 #include <QTextCursor>
 #include <QTextBlock>
 #include <QPainter>
@@ -114,7 +114,6 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
                 cursor.endEditBlock();
 
                 e->accept();
-                break;
             }
             else if(e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
                 // move line down
@@ -134,6 +133,8 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
 
                 e->accept();
             }
+
+            break;
 
         case Qt::Key_Up:
             if(e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier)) {
@@ -158,8 +159,9 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
                 setFocus();
 
                 e->accept();
-                break;
             }
+
+            break;
 
         case Qt::Key_Return:
         case Qt::Key_Enter:
@@ -215,12 +217,9 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
 
             break;
         }
-
-        default:
-        {
-            QPlainTextEdit::keyPressEvent(e);
-        }
     }
+
+    QPlainTextEdit::keyPressEvent(e);
 }
 
 void TextEdit::paintEvent(QPaintEvent *e)
