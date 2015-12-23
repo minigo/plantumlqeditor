@@ -33,8 +33,9 @@ bool AssistantXmlReader::readFile(const QString &path)
 {
     clear();
 
-    QDir assistantDir = QFileInfo(ExpandEnvironmentVariables(path)).absoluteDir();
-    QString iconDir = QFileInfo(path).baseName() + ASSISTANT_ICON_SUFIX;
+    QFileInfo realPath(ExpandEnvironmentVariables(path));
+    QDir assistantDir = realPath.absoluteDir();
+    QString iconDir = realPath.baseName() + ASSISTANT_ICON_SUFIX;
 
     // set path to assistant icons
 
@@ -72,12 +73,12 @@ bool AssistantXmlReader::readFile(const QString &path)
             }
         }
     }
-    qDebug() << "using assistant file      " << path;
+    qDebug() << "using assistant file      " << realPath.absoluteFilePath();
     qDebug() << "using assistant icon path:" << m_iconDir;
 
-    QFile file(path);
+    QFile file(realPath.absoluteFilePath());
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        qDebug() << "can't read assistant file:" << path;
+        qDebug() << "can't read assistant file:" << realPath.absoluteFilePath();
         qDebug() << "i/o error:" << file.errorString();
         return false;
     }
@@ -97,11 +98,11 @@ bool AssistantXmlReader::readFile(const QString &path)
 
     file.close();
     if (m_reader.hasError()) {
-        qDebug() << "failed to parse assistant file:" << path;
+        qDebug() << "failed to parse assistant file:" << realPath.absoluteFilePath();
         qDebug() << "xml parsing error:" << m_reader.errorString();
         return false;
     } else if (file.error() != QFile::NoError) {
-        qDebug() << "can't read assistant file:" << path;
+        qDebug() << "can't read assistant file:" << realPath.absoluteFilePath();
         qDebug() << "i/o error:" << file.errorString();
         return false;
     }

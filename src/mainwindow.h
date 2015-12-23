@@ -1,7 +1,8 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QObject>
+#include <QFileInfo>
 #include <QMainWindow>
 #include <QMap>
 #include <QMessageBox>
@@ -75,7 +76,7 @@ private:
     /*static*/ QIcon iconFromFile(QSize size, /*const*/ QString path, const QString data);
     /*static*/ QListWidget* newAssistantListWidget(const QSize& icon_size, QWidget* parent);
     /*static*/ QString prepareCode(const QString& codeBefore, const bool addTags = true);
-    /*static*/ QString prepareCodeFinal(const QString& codeBefore, const bool addTags = true);
+    /*static*/ QString prepareCodeFinal(const QString& codeBefore);
 
     enum ImageFormat { SvgFormat, PngFormat };
 
@@ -130,10 +131,10 @@ private:
     bool m_refreshOnSave;
     int m_cacheMaxSize;
 
-    QString m_javaPath;
-    QString m_plantUmlPath;
-    QString m_graphvizPath;
-    QString m_cachePath;
+    QFileInfo m_javaPath;
+    QFileInfo m_plantUmlPath;
+    QFileInfo m_graphvizPath;
+    QFileInfo m_cachePath;
 
     QString m_plantUmlVersion;
     QString m_javaVersion;

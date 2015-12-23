@@ -7,42 +7,52 @@
 TARGET = plantumlqeditor
 TEMPLATE = app
 
+QT += core gui svg widgets webkitwidgets
+
 win32:RC_ICONS += resources/icon.ico
 
 #-------------------------------------------------
 
 # In QtCreator, switch "Shadow build" off!
-DESTDIR     = build
-OBJECTS_DIR = $$DESTDIR/obj
-MOC_DIR     = $$DESTDIR/moc
-RCC_DIR     = $$DESTDIR/rcc
-UI_DIR      = $$DESTDIR/ui
-
-#-------------------------------------------------
-
-QT += core gui svg widgets webkitwidgets
+CONFIG += debug_and_release
 
 CONFIG += static
 
 QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
 
-debug {
+CONFIG(debug, debug|release){
+    DESTDIR     = ./debug
+    OBJECTS_DIR = debug/obj
+    MOC_DIR     = debug/moc
+    RCC_DIR     = debug/rcc
+    UI_DIR      = debug/ui
+
     CONFIG += debug
 
-    QMAKE_CXXFLAGS_DEBUG   += -Og
+    QMAKE_CXXFLAGS_DEBUG  += -Og
+
+    unix:QMAKE_DISTCLEAN  += -rf $$DESTDIR
+    win32:QMAKE_DISTCLEAN += /s /f /q $$DESTDIR && rd /s /q $$DESTDIR
 }
-release {
+
+CONFIG(release, debug|release){
+    DESTDIR     = ./release
+    OBJECTS_DIR = release/obj
+    MOC_DIR     = release/moc
+    RCC_DIR     = release/rcc
+    UI_DIR      = release/ui
+
     CONFIG  += warn_off release
 
     DEFINES += QT_NO_DEBUG_OUTPUT
     DEFINES += QT_NO_DEBUG
 
     QMAKE_CXXFLAGS_RELEASE -= -O2
-    QMAKE_CXXFLAGS_RELEASE += -Ofast
-}
+    QMAKE_CXXFLAGS_RELEASE += -O3
 
-unix:QMAKE_DISTCLEAN  += -rf $$DESTDIR
-win32:QMAKE_DISTCLEAN += /s /f /q $$DESTDIR && rd /s /q $$DESTDIR
+    unix:QMAKE_DISTCLEAN  += -rf $$DESTDIR
+    win32:QMAKE_DISTCLEAN += /s /f /q $$DESTDIR && rd /s /q $$DESTDIR
+}
 
 #-------------------------------------------------
 

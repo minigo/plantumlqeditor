@@ -1,44 +1,57 @@
 ﻿#include "src/utils.h"
 
-#include <QProcessEnvironment>
-#include <QDir>
-#include <QRegExp>
 #include <QDebug>
+#include <QDir>
+#include <QCoreApplication>
 
 QString cacheSizeToString(int size)
 {
     return QString("%1 Mb").arg(size / CACHE_SCALE, 0, 'f', 2);
 }
 
-#define ENV_VAR  variables.cap(1)
-#define UNIX_VAR variables.cap(2)
-#define WIN_VAR  variables.cap(3)
-
 /**
  * @brief ExpandEnvironmentVariables
  * @param withVariables
  * @return withoutVariables
  */
-QString ExpandEnvironmentVariables(QString withVariables)
+QString ExpandEnvironmentVariables(const QString pWithVariables, bool pIsPath)
 {
-    if(withVariables.isEmpty()) return withVariables;
+    if(pWithVariables.isEmpty()) return pWithVariables;
 
-//    withVariables.replace(QRegExp("^[.]/"), "");
-//    withVariables.replace(QRegExp("^[.]/"), dir.absolutePath());
-    withVariables.replace(s_reHome, "${HOME}/"); // ~ => QDir::homePath() => Qt isn't very smart :(
-    withVariables.replace(s_reQEditor, dir.absolutePath());
+    qDebug() << "\nENV <" << pWithVariables;
+
+    QString withVariables = pWithVariables;
+
+    if(pIsPath) {
+        // . => ${PQE_HOME}
+        if(s_reCurentDir.indexIn(withVariables) != -1) {
+            withVariables.replace(s_reCurentDir.cap(1), "${PQE_HOME}");
+            //withVariables.replace(s_reCurentDir.cap(2), QDir::separator());
+        }
+
+        // ~ => ${HOME} (not ~user = /home/user !)
+        if(s_reHome.indexIn(withVariables) != -1) {
+            withVariables.replace(s_reHome.cap(1), "${HOME}");
+            //withVariables.replace(s_reHome.cap(2), QDir::separator());
+        }
+#ifdef Q_OS_WIN
+        withVariables.replace("/", QDir::separator());
+#else
+        withVariables.replace("\\", QDir::separator());
+#endif
+
+        qDebug() << "ENV -" << withVariables;
+    }
 
     QString withoutVariables = withVariables;
-
-    qDebug() << "ENV <" << withoutVariables;
 
     // *nix and Windows style
     {
         int pos = 0;
-        while ((pos = envVars.indexIn(withVariables, pos)) != -1) {
+        while ((pos = s_reMatches.indexIn(withVariables, pos)) != -1) {
 
-            QString envVar  = envVars.cap(1);
-            QString varName = envVars.cap(1).startsWith('$') ? envVars.cap(2) : envVars.cap(3);
+            QString match   = s_reMatches.cap(1);
+            QString varName = s_reMatches.cap(2).isEmpty() ? s_reMatches.cap(3) : s_reMatches.cap(2);
 
             // same behavior on *nix and Windows
 #ifdef Q_OS_WIN
@@ -66,13 +79,16 @@ QString ExpandEnvironmentVariables(QString withVariables)
                 env.insert(varName, stdout);
             }
 #endif
+            else if(varName == "PQE_HOME") {
+                env.insert(varName, QCoreApplication::applicationDirPath());
+            }
 
-            withoutVariables  = withoutVariables.replace(envVar, env.value(varName));
-            pos += envVars.matchedLength();
+            withoutVariables  = withoutVariables.replace(match, env.value(varName));
+            pos += s_reMatches.matchedLength();
 
-            qDebug() << "ENV =" << envVar << "->" << varName << "=>" << env.value(varName);
+            qDebug() << "ENV =" << match << "->" << varName << "=>" << env.value(varName);
         }
     }
-    qDebug() << "ENV >" << withoutVariables;
+    qDebug() << "ENV >" << withoutVariables << "\n";
     return withoutVariables;
 }

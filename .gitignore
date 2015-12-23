@@ -1,9 +1,13 @@
 .directory
 /build
+/release
+/debug
 Makefile*
 *~
 *.sh
 *.bat
+*.tar.bz2
+*.zip
 plantumlqeditor
 *.pro.user.*
 *.user

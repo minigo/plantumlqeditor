@@ -444,14 +444,14 @@ void MainWindow::refresh(bool forced) {
 
     QStringList arguments;
 
-    arguments << "-jar" << m_plantUmlPath
+    arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
               << QString("-t%1").arg(m_imageFormatNames[m_currentImageFormat])
-              << "-word"                // a1e don't use the optional filename
+              << "-word"                // don't use the optional filename
               << "-fastfail2"           // a1e
               << "-nbthread" << "auto";  // a1e
 
     if (m_useCustomGraphviz) {
-        arguments << "-graphvizdot" << m_graphvizPath;
+        arguments << "-graphvizdot" << m_graphvizPath.absoluteFilePath();
     }
 
     arguments << "-charset" << "UTF-8"
@@ -471,7 +471,7 @@ void MainWindow::refresh(bool forced) {
         m_process->setWorkingDirectory(fi.absolutePath());
     }
 
-    m_process->start(m_javaPath, arguments);
+    m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
     if (!m_process->waitForStarted()) {
         qDebug() << "refresh subprocess failed to start";
@@ -734,18 +734,16 @@ void MainWindow::readSettings(bool reload) {
         m_useCustomJava = settings.value(SETTINGS_USE_CUSTOM_JAVA, SETTINGS_USE_CUSTOM_JAVA_DEFAULT).toBool();
         m_customJavaPath = settings.value(SETTINGS_CUSTOM_JAVA_PATH, SETTINGS_CUSTOM_JAVA_PATH_DEFAULT).toString();
 
-        m_javaPath = m_useCustomJava ? m_customJavaPath : SETTINGS_CUSTOM_JAVA_PATH_DEFAULT;
-        m_javaPath = ExpandEnvironmentVariables(m_javaPath);
+        m_javaPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomJava ? m_customJavaPath : SETTINGS_CUSTOM_JAVA_PATH_DEFAULT));
 
-        { //a1e: Determine java version
+        { // Determine java version
             m_javaVersion = tr("Unknown");
-            QFileInfo fi(m_javaPath);
             m_process = new QProcess(this);
-            m_process->setWorkingDirectory(fi.absolutePath());
+            m_process->setWorkingDirectory(m_javaPath.absolutePath());
             m_process->setProcessChannelMode(QProcess::MergedChannels);
             QStringList arguments;
             arguments << "-version";
-            m_process->start(m_javaPath, arguments);
+            m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
             if (!m_process->waitForStarted()) {
                 qDebug() << "refresh subprocess failed to start";
@@ -773,19 +771,16 @@ void MainWindow::readSettings(bool reload) {
         m_useCustomPlantUml = settings.value(SETTINGS_USE_CUSTOM_PLANTUML, SETTINGS_USE_CUSTOM_PLANTUML_DEFAULT).toBool();
         m_customPlantUmlPath = settings.value(SETTINGS_CUSTOM_PLANTUML_PATH, SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT).toString();
 
-        m_plantUmlPath = m_useCustomPlantUml ? m_customPlantUmlPath : SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT;
-        m_plantUmlPath = ExpandEnvironmentVariables(m_plantUmlPath);
+        m_plantUmlPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomPlantUml ? m_customPlantUmlPath : SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT));
 
-        {
+        { // Determine plantuml version
             m_plantUmlVersion = tr("Unknown");
-            QFileInfo fi(m_plantUmlPath);
             m_process = new QProcess(this);
-            m_process->setWorkingDirectory(fi.absolutePath());
-            qDebug() << "PlantUML => " << fi.absolutePath();
+            m_process->setWorkingDirectory(m_plantUmlPath.absolutePath());
             m_process->setProcessChannelMode(QProcess::MergedChannels);
             QStringList arguments;
-            arguments << "-jar" << m_plantUmlPath << "-version";
-            m_process->start(m_javaPath, arguments);
+            arguments << "-jar" << m_plantUmlPath.absoluteFilePath() << "-version";
+            m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
             if (!m_process->waitForStarted()) {
                 qDebug() << "refresh subprocess failed to start";
@@ -812,18 +807,16 @@ void MainWindow::readSettings(bool reload) {
         m_useCustomGraphviz = settings.value(SETTINGS_USE_CUSTOM_GRAPHVIZ, SETTINGS_USE_CUSTOM_GRAPHVIZ_DEFAULT).toBool();
         m_customGraphvizPath = settings.value(SETTINGS_CUSTOM_GRAPHVIZ_PATH, SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT).toString();
 
-        m_graphvizPath = m_useCustomGraphviz ? m_customGraphvizPath : SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT;
-        m_graphvizPath = ExpandEnvironmentVariables(m_graphvizPath);
+        m_graphvizPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomGraphviz ? m_customGraphvizPath : SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT));
 
-        { //a1e: Determine graphviz version
+        { // Determine graphviz version
             m_graphvizVersion = tr("Unknown");
-            QFileInfo fi(m_graphvizPath);
             m_process = new QProcess(this);
-            m_process->setWorkingDirectory(fi.absolutePath());
+            m_process->setWorkingDirectory(m_graphvizPath.absolutePath());
             m_process->setProcessChannelMode(QProcess::MergedChannels);
             QStringList arguments;
             arguments << "-V";
-            m_process->start(m_graphvizPath, arguments);
+            m_process->start(m_graphvizPath.absoluteFilePath(), arguments);
 
             if (!m_process->waitForStarted()) {
                 qDebug() << "refresh subprocess failed to start";
@@ -869,11 +862,10 @@ void MainWindow::readSettings(bool reload) {
         m_useCustomCache = settings.value(SETTINGS_USE_CUSTOM_CACHE, SETTINGS_USE_CUSTOM_CACHE_DEFAULT).toBool();
         m_customCachePath = settings.value(SETTINGS_CUSTOM_CACHE_PATH, DEFAULT_CACHE_PATH).toString();
         m_cacheMaxSize = settings.value(SETTINGS_CACHE_MAX_SIZE, SETTINGS_CACHE_MAX_SIZE_DEFAULT).toInt();
-        m_cachePath = m_useCustomCache ? m_customCachePath : DEFAULT_CACHE_PATH;
-        m_cachePath = ExpandEnvironmentVariables(m_cachePath);
+        m_cachePath = QFileInfo(ExpandEnvironmentVariables(m_useCustomCache ? m_customCachePath : DEFAULT_CACHE_PATH));
 
         m_cache->setMaxCost(m_cacheMaxSize);
-        m_cache->setPath(m_cachePath,
+        m_cache->setPath(m_cachePath.absolutePath(),
                          [](const QString & path,
                             const QString & key,
                             int cost,
@@ -1266,14 +1258,14 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     QString formatOpt = "-t" + format;
 
     QStringList arguments;
-    arguments << "-jar" << m_plantUmlPath
+    arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
               << formatOpt
               << "-word"           // don't use the optional filename
               << "-fastfail2"
               << "-nbthread" << "auto";
 
     if (m_useCustomGraphviz) {
-        arguments << "-graphvizdot" << m_graphvizPath;
+        arguments << "-graphvizdot" << m_graphvizPath.absoluteFilePath();
     }
 
     arguments << "-charset" << "UTF-8"
@@ -1283,7 +1275,7 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     QFileInfo fi(plantUmlFile);
     process->setWorkingDirectory(fi.absolutePath());
 
-    process->start(m_javaPath, arguments);
+    process->start(m_javaPath.absoluteFilePath(), arguments);
 
     if (!process->waitForStarted()) {
         qDebug() << "render subprocess failed to start";
@@ -1624,7 +1616,7 @@ void MainWindow::createDockWindows() {
     { // Assistant dock
         m_assistantDock = dock = new QDockWidget(tr("Assistant"), this);
         m_assistantToolBox = new QToolBox(dock);
-        m_assistantToolBox->layout()->setSpacing(1); //a1e display more content
+        m_assistantToolBox->layout()->setSpacing(1); //display more content
         dock->setWidget(m_assistantToolBox);
         dock->setObjectName("assistant");
         addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -1883,7 +1875,7 @@ QString MainWindow::prepareCode(const QString& codeBefore, const bool addTags)
     return code;
 }
 
-QString MainWindow::prepareCodeFinal(const QString& codeBefore, const bool addTags) {
+QString MainWindow::prepareCodeFinal(const QString& codeBefore) {
 
     QString code = codeBefore; //prepareCode(codeBefore, addTags);
 
@@ -1918,7 +1910,7 @@ QString MainWindow::prepareCodeFinal(const QString& codeBefore, const bool addTa
         code.replace(QRegExp("(\\$\\{DIR\\}|%DIR%)"),   fileInfo.absolutePath());
     }
 
-    code = ExpandEnvironmentVariables(code);
+    code = ExpandEnvironmentVariables(code, false);
 
     return code;
 
