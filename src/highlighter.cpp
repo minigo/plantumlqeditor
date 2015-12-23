@@ -23,7 +23,7 @@ class HighLighter:
 
         const  QRegExp REGEX_BEGIN_END  = QRegExp("(@(start|end)(uml|salt|ditaa|jcckit|dot))");
         const  QRegExp REGEX_DECORATION = QRegExp("(title .+|legend.*|endlegend|footer.*|end footer|header.*|end header)");
-        const  QRegExp REGEX_KEYWORD    = QRegExp("\\b(object|class|interface|namespace|component|enum|static|abstract|package|cloud|node|database|folder|frame|participant|actor|as|group)\\b");
+        const  QRegExp REGEX_KEYWORD    = QRegExp("\\b(object|class|interface|namespace|component|enum|sprite|static|abstract|package|cloud|node|database|folder|frame|participant|actor|as|group)\\b");
         const  QRegExp REGEX_KEYWORD2   = QRegExp("\\b(then|else|elseif|endif|if|while|endwhile|repeat while|repeat|start|stop|true|false|end fork|endfork|fork again|fork|detach|split|split again|end split)\\b");
         const  QRegExp REGEX_COLOR      = QRegExp("#([a-9a-f]{6}|\\w{3,20})");
         const  QRegExp REGEX_SKIN       = QRegExp("skinparam .+");
@@ -74,11 +74,12 @@ class HighLighter:
         QTextCharFormat format_decoration;
         QTextCharFormat format_keyword;
         QTextCharFormat format_keyword2;
+        QTextCharFormat format_keyword3;
         QTextCharFormat format_color;
         QTextCharFormat format_skin;
         QTextCharFormat format_option;
         QTextCharFormat format_mask;
-        //     QTextCharFormat format_arrow;
+        QTextCharFormat format_arrow;
         QTextCharFormat format_html;
         QTextCharFormat format_separator;
         QTextCharFormat format_comment;
@@ -89,24 +90,31 @@ class HighLighter:
         CodeType codeType = UNKNOWN;
         QString endtag;
 
-     /**
-     * Highlight all words in a line and mark the rest as failure.
-     */
-        bool highlightWords(const QString &text, QRegExp regex, QTextCharFormat format) {
+        /**
+         * Highlight all words in a line and mark the rest as failure.
+         */
+        bool highlightWords(const QString &text, const QRegExp &regex, const QTextCharFormat &format) {
 
             bool highlighted = false;
-            int offset = 0;
-            for(int times = 0; times <= 99; ++times) {
-                int pos = regex.indexIn(text, offset);
-                if(pos > -1) {
-                    setFormat(pos, regex.matchedLength(), format);
-                    offset += regex.matchedLength();
-                    highlighted = true;
-                    continue;
+            int pos = 0;
+            while ((pos = regex.indexIn(text, pos)) != -1) {
+
+                if(!regex.cap(1).isEmpty() ) {
+                    // highlight submatch only
+                    int pos2 = regex.cap(0).indexOf(regex.cap(1));
+                    if(pos2 >= -1) {
+                        int pos2 = regex.cap(0).indexOf(regex.cap(1));
+                        setFormat(pos + pos2, regex.cap(1).length(), format);
+                        pos += regex.matchedLength();
+                        highlighted = true;
+                        continue;
+                    }
                 }
-                else {
-                    break;
-                }
+
+                // highlight match
+                setFormat(pos, regex.matchedLength(), format);
+                pos += regex.matchedLength();
+                highlighted = true;
             }
             return highlighted;
         }
@@ -114,7 +122,7 @@ class HighLighter:
         /**
          * Highlight one word (match).
          */
-        bool highlightWord(const QString &text, QRegExp regex, QTextCharFormat format) {
+        bool highlightWord(const QString &text, const QRegExp regex, const QTextCharFormat &format, const bool markError = true) {
             bool highlighted = false;
             int pos = regex.indexIn(text);
             if(pos > -1) {
@@ -122,15 +130,17 @@ class HighLighter:
                 highlighted = true;
 
                 // highlight wrong part
-                int good = pos+regex.matchedLength();
-                if(good < text.length()) {
-                    setFormat(good, text.length() - good, format_error);
+                if(markError) {
+                    int good = pos+regex.matchedLength();
+                    if(good < text.length()) {
+                        setFormat(good, text.length() - good, format_error);
+                    }
                 }
             }
             return highlighted;
         }
 
-        bool highlightRestOfLine(const QString &text, QRegExp regex, QTextCharFormat format) {
+        bool highlightRestOfLine(const QString &text, const QRegExp &regex, const QTextCharFormat &format) {
             bool highlighted = false;
 
             int pos = regex.indexIn(text);
@@ -196,6 +206,14 @@ class HighLighter:
          */
         void highlightBlockSalt(const QString &text) {
 
+            highlightWords(text, QRegExp("(\\[[^\\]]+\\])"), format_keyword3);                       // Butoon [Some Text]
+            highlightWords(text, QRegExp("(\\^[^\\^]+\\^)"), format_keyword3);                       // Droplist ^Some Text^
+            highlightWords(text, QRegExp("(\"[^\"]+\")"), format_keyword3);                          // Input Field "Some Text"
+            highlightWords(text, QRegExp("(\\[ ?\\]|\\[X\\]|\\( ?\\)|\\(X\\))"), format_keyword3);   // Checkbox, Radio button []  [ ]  [X]  ()  ( )  (X)
+            highlightWords(text, QRegExp("(\\.\\.|~~|--|==|\\s\\|\\s)"), format_separator);          // Separator
+            highlightWords(text, QRegExp("^\\s*(\\++)"), format_separator);                          // Tree Level
+            highlightWords(text, REGEX_HTML_TAG, format_html);
+            highlightWords(text, QRegExp("\\{([T/!#+-])"), format_separator);                        // Widget (Tab Strip, Tree) or Grid Lines
         }
 
         /**
@@ -203,7 +221,9 @@ class HighLighter:
          * @param text
          */
         void highlightBlockDot(const QString &text) {
-
+            highlightWords(text, QRegExp("^(digraph|graph)"), format_keyword);
+            highlightWords(text, QRegExp("^\\s*(subgraph)"), format_keyword);
+            highlightWords(text, QRegExp("(->|--)"), format_arrow); // TODO Fix me!!!
         }
 
         /**
@@ -221,7 +241,7 @@ class HighLighter:
          * @param text
          */
         void highlightBlockJcckit(const QString &text) {
-
+//            highlightWords(text, QRegExp("c[0-9A-Z]{3}"), format_color); // TODO Fix me!!!
         }
 
     public:
@@ -244,6 +264,10 @@ class HighLighter:
             format_keyword2.setFontWeight(QFont::Bold);
             format_keyword2.setForeground(Qt::darkBlue);
 
+            format_keyword3.setFontWeight(QFont::Bold);
+            format_keyword3.setForeground(Qt::darkBlue);
+            format_keyword3.setBackground(Qt::lightGray);
+
             format_color.setForeground(Qt::darkCyan);
 
             format_skin.setFontWeight(QFont::Normal);
@@ -255,12 +279,11 @@ class HighLighter:
             format_mask.setFontWeight(QFont::Normal);
             format_mask.setForeground(QColor(0xaa, 0xaa, 0xaa));
 
-            //format_arrow.setForeground(Qt::darkMagenta);
-            //format_arrow.setBackground(QColor(0xaa, 0xaa, 0xaa));
-            //format_arrow.setFontWeight(QFont::Bold);
+            format_arrow.setForeground(Qt::darkMagenta);
+            format_arrow.setFontWeight(QFont::Bold);
 
             format_html.setFontWeight(QFont::Normal);
-            format_html.setForeground(Qt::lightGray);
+            format_html.setForeground(Qt::gray);
 
             format_comment.setFontItalic(true);
             format_comment.setBackground(QColor(240,240,240));
