@@ -299,7 +299,14 @@ void MainWindow::about() {
  * @brief MainWindow::onReferenceGuide
  */
 void MainWindow::onReferenceGuide() {
-    QDesktopServices::openUrl(QUrl("http://plantuml.com/PlantUML_Language_Reference_Guide.pdf"));
+
+    QFileInfo pdf(ExpandEnvironmentVariables("${PQE_HOME}/PlantUML_Language_Reference_Guide.pdf"));
+
+    if(pdf.exists()) {
+        QDesktopServices::openUrl(QUrl(pdf.absoluteFilePath()));
+    } else {
+        QDesktopServices::openUrl(QUrl("http://plantuml.com/PlantUML_Language_Reference_Guide.pdf"));
+    }
 }
 
 QString MainWindow::makeKeyForDocument(QByteArray current_document) {

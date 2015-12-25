@@ -3,6 +3,7 @@
 /release
 /debug
 Makefile*
+object_script.plantumlqeditor.*
 *~
 *.sh
 *.bat
