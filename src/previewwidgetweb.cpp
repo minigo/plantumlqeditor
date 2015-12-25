@@ -155,7 +155,7 @@ void PreviewWidgetWeb::load(const QByteArray &data)
             m_height += 16;
     }
 
-    m_webView->setHtml(HTML_BEGIN + content + HTML_END, QUrl("/"));
+    m_webView->setHtml(HTML_BEGIN + content + HTML_END, QUrl());
     zoomImage();
     update();
 }
