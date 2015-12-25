@@ -37,40 +37,23 @@ bool AssistantXmlReader::readFile(const QString &path)
     QDir assistantDir = realPath.absoluteDir();
     QString iconDir = realPath.baseName() + ASSISTANT_ICON_SUFIX;
 
+    if(!realPath.exists()) {
+        qDebug() << "assistant not found";
+        return false;
+    }
+
     // set path to assistant icons
 
     if (assistantDir.cd(iconDir)) {
         // use subdir
         m_iconDir = assistantDir.absolutePath();
     } else {
-        qDebug() << "directory with assistant icons not found";
-
-        // TODO search or create dir (xml, curr, app)
-
-        QSettings settings;
-        if(settings.value(SETTINGS_PREF_PREVIEW+"/"+SETTINGS_USE_CACHE, false).toBool() == true){
-            qDebug() << "... using image cache";
-            m_iconDir = ExpandEnvironmentVariables(settings.value(SETTINGS_PREF_PREVIEW+"/"+SETTINGS_CUSTOM_CACHE_PATH, ".").toString());
-        }
-        else
-        {
-            // TODO: don't generate missing icons
-
-            QDir currentDir;
-            QDir appDir(QCoreApplication::applicationDirPath());
-
-            if(currentDir.mkdir(iconDir)){ // pwd
-                qDebug() << "... created icon directory in current dir";
-                currentDir.cd(iconDir);
-                m_iconDir = iconDir;
-            } else if(appDir.mkdir(iconDir)){ // exe
-                qDebug() << "... created icon directory in application dir";
-                appDir.cd(iconDir);
-                m_iconDir = iconDir;
-            } else {
-                qDebug() << "... using temp directory";
-                m_iconDir = QDir::tempPath();
-            }
+        qDebug() << "directory with assistant icons not found => create directory";
+        assistantDir.mkdir(iconDir);
+        if (assistantDir.cd(iconDir)) {
+            m_iconDir = assistantDir.absolutePath();
+        } else {
+            return false;
         }
     }
     qDebug() << "using assistant file      " << realPath.absoluteFilePath();
