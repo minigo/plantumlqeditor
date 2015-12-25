@@ -24,21 +24,10 @@ QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath)
 
     if(pIsPath) {
         // . => ${PQE_HOME}
-        if(s_reCurentDir.indexIn(withVariables) != -1) {
-            withVariables.replace(s_reCurentDir.cap(1), "${PQE_HOME}");
-            //withVariables.replace(s_reCurentDir.cap(2), QDir::separator());
-        }
+        withVariables.replace(s_reCurentDir, "${PQE_HOME}/");
 
         // ~ => ${HOME} (not ~user = /home/user !)
-        if(s_reHome.indexIn(withVariables) != -1) {
-            withVariables.replace(s_reHome.cap(1), "${HOME}");
-            //withVariables.replace(s_reHome.cap(2), QDir::separator());
-        }
-#ifdef Q_OS_WIN
-        withVariables.replace("/", QDir::separator());
-#else
-        withVariables.replace("\\", QDir::separator());
-#endif
+        withVariables.replace(s_reHome, "${HOME}/");
 
         qDebug() << "ENV -" << withVariables;
     }
@@ -89,6 +78,9 @@ QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath)
             qDebug() << "ENV =" << match << "->" << varName << "=>" << env.value(varName);
         }
     }
+
+    withoutVariables.replace("\\", "/"); // Qt handles the separators
+
     qDebug() << "ENV >" << withoutVariables << "\n";
     return withoutVariables;
 }
