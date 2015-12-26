@@ -1132,7 +1132,7 @@ void MainWindow::exportImage(const QString& filename) {
                << "VDX Image (*.vdx)"
                << "XMI Image (*.xmi)"
                << "HTML File (*.html)"
-               << "TXT File (*.txt)"
+               << "ATXT File (*.atxt)"
                << "UTXT File (*.utxt)"
                << "All Files (*.*)";
 
@@ -1188,7 +1188,7 @@ void MainWindow::exportImage(const QString& filename) {
                   fileExtension == "vdx"  ||
                   fileExtension == "xmi"  ||
                   fileExtension == "html" ||
-                  fileExtension == "txt"  ||
+                  fileExtension == "atxt" ||
                   fileExtension == "utxt" ) {
             generateImage(tmpFilename, fileExtension);
         }
@@ -1262,7 +1262,7 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     out << src;
     file.close();
 
-    QString formatOpt = "-t" + format;
+    QString formatOpt = "-t" + ( format == "atxt" ? "txt" : format ); // -ttxt generates *.atxt files
 
     QStringList arguments;
     arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
@@ -1282,6 +1282,7 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     QFileInfo fi(plantUmlFile);
     process->setWorkingDirectory(fi.absolutePath());
 
+    qDebug() << "call" << m_javaPath.absoluteFilePath() << arguments;
     process->start(m_javaPath.absoluteFilePath(), arguments);
 
     if (!process->waitForStarted()) {
