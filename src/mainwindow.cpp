@@ -631,7 +631,7 @@ void MainWindow::onRecentDocumentsActionTriggered(const QString& path) {
     openDocument(path);
 }
 
-void MainWindow::onAssistanItemDoubleClicked(QListWidgetItem* item) {            
+void MainWindow::onAssistanItemDoubleClicked(QListWidgetItem* item) {
 
     insertAssistantCode(item->data(ASSISTANT_ITEM_DATA_ROLE).toString());
 
@@ -734,7 +734,7 @@ void MainWindow::readSettings(bool reload) {
     const QString DEFAULT_CACHE_PATH = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #endif
 
-    QSettings settings;    
+    QSettings settings;
 
     settings.beginGroup(SETTINGS_PREF_PROGRAMS);
     {
@@ -1128,10 +1128,10 @@ void MainWindow::exportImage(const QString& filename) {
         filter << "PNG Image (*.png)"
                << "SVG Image (*.svg)"
                << "EPS Image (*.eps)"
-               << "PDF Image (*.pdf)"
                << "VDX Image (*.vdx)"
-               << "XMI Image (*.xmi)"
-               << "HTML File (*.html)"
+               << "PDF Image !!! (*.pdf)"
+               << "XMI Image !!! (*.xmi)"
+               << "HTML File !!! (*.html)"
                << "ATXT File (*.atxt)"
                << "UTXT File (*.utxt)"
                << "All Files (*.*)";
@@ -1144,14 +1144,29 @@ void MainWindow::exportImage(const QString& filename) {
             dir = m_documentPath;
         }
 
-        tmpFilename = QFileDialog::getSaveFileName(this,
-                   tr("Select where to export the image"),
-                   dir,
-                   filter.join(";;")
-                   );
+        dir = dir.replace(QRegExp("\\.\\w{1,10}$"), ".png");
 
+        QString selectedFilter;
+        tmpFilename = QFileDialog::getSaveFileName(this,
+                                                   tr("Select where to export the image"),
+                                                   dir,
+                                                   filter.join(";;"),
+                                                   &selectedFilter
+                                                   );
         if (tmpFilename.isEmpty()) {
             return;
+        }
+
+        // Example: "PNG Image (*.png)"
+        QRegExp reExt("\\*(\\.\\w{3,4})");
+        if(reExt.indexIn(selectedFilter) > -1){
+            QString fileExtension = reExt.cap(1);
+
+            qDebug() << "add extemsion:" << fileExtension;
+
+            if(!tmpFilename.contains(fileExtension, Qt::CaseInsensitive)) {
+                tmpFilename = tmpFilename + fileExtension;
+            }
         }
     }
 
@@ -1163,7 +1178,7 @@ void MainWindow::exportImage(const QString& filename) {
         return;
     }
 
-    QRegExp ext("\\.([a-zA-Z0.9]{1,4})$");
+    QRegExp ext("\\.(\\w{3,4})$");
     if (ext.indexIn(tmpFilename) > -1) {
         QString fileExtension = ext.cap(1);
 
@@ -1196,7 +1211,7 @@ void MainWindow::exportImage(const QString& filename) {
             // unknown file extension
             file.write(m_cachedImage);
         }
-    }    
+    }
     else {
         // no file extension
         file.write(m_cachedImage);
@@ -1635,7 +1650,7 @@ void MainWindow::createDockWindows() {
         m_showAssistantDockAction->setStatusTip(tr("Show or hide the assistant dock"));
 #ifndef Q_OS_WIN // BUG: icons are not displayed when cross-linking
         m_showAssistantDockAction->setIcon(QIcon(":/resources/assistant.svg"));
-#else    
+#else
         m_showAssistantDockAction->setIcon(QIcon(":/resources/assistant.svg"));
 #endif
         m_showAssistantDockAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::ALT + Qt::Key_A));
