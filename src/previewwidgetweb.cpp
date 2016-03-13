@@ -49,7 +49,7 @@ static const QString HTML_END   = "      </td>"
  */
 PreviewWidgetWeb::PreviewWidgetWeb(QWidget *parent)
     : PreviewWidget(parent)
-{   
+{
     m_webView = new WebView(this);
     m_webView->setPreviewWidgetWeb(this);
 
@@ -65,7 +65,7 @@ void PreviewWidgetWeb::setScrollArea (QScrollArea *scrollArea)
 }
 
 void PreviewWidgetWeb::load(const QByteArray &data)
-{    
+{
     QByteArray content;
 
     m_width  = -1;
@@ -242,5 +242,5 @@ void PreviewWidgetWeb::paintEvent(QPaintEvent *)
 void PreviewWidgetWeb::zoomImage()
 {
     qreal zoom = qreal(m_zoomScale) / 100; // 200 -> 2.00 = double size
-    m_webView->setZoomFactor(zoom);   
+    m_webView->setZoomFactor(zoom);
 }

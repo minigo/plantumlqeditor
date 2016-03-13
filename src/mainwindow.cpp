@@ -451,7 +451,8 @@ void MainWindow::refresh(bool forced) {
 
     QStringList arguments;
 
-    arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
+    arguments << "-splash:no"
+              << "-jar" << m_plantUmlPath.absoluteFilePath()
               << QString("-t%1").arg(m_imageFormatNames[m_currentImageFormat])
               << "-word"                // don't use the optional filename
               << "-fastfail2"
@@ -786,7 +787,7 @@ void MainWindow::readSettings(bool reload) {
             m_process->setWorkingDirectory(m_plantUmlPath.absolutePath());
             m_process->setProcessChannelMode(QProcess::MergedChannels);
             QStringList arguments;
-            arguments << "-jar" << m_plantUmlPath.absoluteFilePath() << "-version";
+            arguments << "-splash:no" << "-jar" << m_plantUmlPath.absoluteFilePath() << "-version";
             m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
             if (!m_process->waitForStarted()) {
@@ -1280,7 +1281,8 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     QString formatOpt = "-t" + ( format == "atxt" ? "txt" : format ); // -ttxt generates *.atxt files
 
     QStringList arguments;
-    arguments << "-jar" << m_plantUmlPath.absoluteFilePath()
+    arguments << "-splash:no"
+              << "-jar" << m_plantUmlPath.absoluteFilePath()
               << formatOpt
               << "-word"           // don't use the optional filename
               << "-fastfail2"

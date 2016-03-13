@@ -1,6 +1,8 @@
 ﻿#include <QtGui>
 #include <QColor>
 
+#include "language.h"
+
 /**
  * Highlighter.
  *

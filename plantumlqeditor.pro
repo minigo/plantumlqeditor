@@ -83,7 +83,8 @@ HEADERS += \
     src/textedit.h \
     src/filecache.h \
     src/utils.h \
-    src/webview.h
+    src/webview.h \
+    src/language.h
 
 FORMS += \
     src/preferencesdialog.ui
