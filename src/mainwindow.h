@@ -37,7 +37,7 @@ public:
     void openDocument ( const QString& path );
     bool useLastDocument();
     void openLastDocument();
-    bool generateImage( const QString& filename, const QString& format, const QString& src = NULL);
+    bool generateImage( const QString& filename, const QString& format, const QString& src = NULL, const bool keepPlantUmlFile = false);
     bool switchPreviewModeIfNeeded();
 public slots:
     void newDocument();

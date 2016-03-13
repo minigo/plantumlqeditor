@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_General">
       <attribute name="title">
@@ -248,7 +248,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_ImageCache">
          <property name="title">
-          <string>Image Cache</string>
+          <string>Image &amp;Cache</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -263,7 +263,7 @@
           <item>
            <widget class="QRadioButton" name="defaultCacheRadio">
             <property name="text">
-             <string>Default</string>
+             <string>Defau&amp;lt</string>
             </property>
            </widget>
           </item>
@@ -375,7 +375,7 @@
        <item alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBox_Preview_Other">
          <property name="title">
-          <string>Other</string>
+          <string>Refresh</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_12" stretch="0,0">
           <item>

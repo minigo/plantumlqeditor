@@ -570,7 +570,11 @@ void MainWindow::onAutoRefreshActionToggled(bool state) {
 
 void MainWindow::onEditorChanged() {
 
+    // prevent refreshing during typing
+    m_autoRefreshTimer->start();
+
     if (!refreshFromCache()) {
+        // cache not used or not in cache
         m_needsRefresh = true;
     }
 
@@ -739,113 +743,122 @@ void MainWindow::readSettings(bool reload) {
 
     settings.beginGroup(SETTINGS_PREF_PROGRAMS);
     {
-        m_useCustomJava = settings.value(SETTINGS_USE_CUSTOM_JAVA, SETTINGS_USE_CUSTOM_JAVA_DEFAULT).toBool();
-        m_customJavaPath = settings.value(SETTINGS_CUSTOM_JAVA_PATH, SETTINGS_CUSTOM_JAVA_PATH_DEFAULT).toString();
+        // java.exe
+        {
+            m_useCustomJava = settings.value(SETTINGS_USE_CUSTOM_JAVA, SETTINGS_USE_CUSTOM_JAVA_DEFAULT).toBool();
+            m_customJavaPath = settings.value(SETTINGS_CUSTOM_JAVA_PATH, SETTINGS_CUSTOM_JAVA_PATH_DEFAULT).toString();
 
-        m_javaPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomJava ? m_customJavaPath : SETTINGS_CUSTOM_JAVA_PATH_DEFAULT));
+            m_javaPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomJava ? m_customJavaPath : SETTINGS_CUSTOM_JAVA_PATH_DEFAULT));
 
-        { // Determine java version
-            m_javaVersion = tr("Unknown");
-            m_process = new QProcess(this);
-            m_process->setWorkingDirectory(m_javaPath.absolutePath());
-            m_process->setProcessChannelMode(QProcess::MergedChannels);
-            QStringList arguments;
-            arguments << "-version";
-            m_process->start(m_javaPath.absoluteFilePath(), arguments);
+            { // Determine java version
+                m_javaVersion = tr("Unknown");
+                m_process = new QProcess(this);
+                m_process->setWorkingDirectory(m_javaPath.absolutePath());
+                m_process->setProcessChannelMode(QProcess::MergedChannels);
+                QStringList arguments;
+                arguments << "-version";
+                m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
-            if (!m_process->waitForStarted()) {
-                qDebug() << "refresh subprocess failed to start";
-            } else {
-                QByteArray data;
+                if (!m_process->waitForStarted()) {
+                    qDebug() << "refresh subprocess failed to start";
+                } else {
+                    QByteArray data;
 
-                while (m_process->waitForReadyRead()) {
-                    data.append(m_process->readAll());
+                    while (m_process->waitForReadyRead()) {
+                        data.append(m_process->readAll());
+                    }
+
+                    QRegExp regex("version (\\S+)");
+                    int pos = 0;
+                    pos = regex.indexIn(data.data(), pos);
+
+                    if (pos > -1) {
+                        m_javaVersion = regex.cap(1);
+                        m_javaVersion.replace("\"", "");
+                    }
                 }
 
-                QRegExp regex("version (\\S+)");
-                int pos = 0;
-                pos = regex.indexIn(data.data(), pos);
-
-                if (pos > -1) {
-                    m_javaVersion = regex.cap(1);
-                    m_javaVersion.replace("\"", "");
-                }
+                //delete m_process;
+                m_process = 0;
             }
-
-            //delete m_process;
-	    m_process = 0;
         }
 
-        m_useCustomPlantUml = settings.value(SETTINGS_USE_CUSTOM_PLANTUML, SETTINGS_USE_CUSTOM_PLANTUML_DEFAULT).toBool();
-        m_customPlantUmlPath = settings.value(SETTINGS_CUSTOM_PLANTUML_PATH, SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT).toString();
+        // plantuml.jar
+        {
+            m_useCustomPlantUml = settings.value(SETTINGS_USE_CUSTOM_PLANTUML, SETTINGS_USE_CUSTOM_PLANTUML_DEFAULT).toBool();
+            m_customPlantUmlPath = settings.value(SETTINGS_CUSTOM_PLANTUML_PATH, SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT).toString();
 
-        m_plantUmlPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomPlantUml ? m_customPlantUmlPath : SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT));
+            m_plantUmlPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomPlantUml ? m_customPlantUmlPath : SETTINGS_CUSTOM_PLANTUML_PATH_DEFAULT));
 
-        { // Determine plantuml version
-            m_plantUmlVersion = tr("Unknown");
-            m_process = new QProcess(this);
-            m_process->setWorkingDirectory(m_plantUmlPath.absolutePath());
-            m_process->setProcessChannelMode(QProcess::MergedChannels);
-            QStringList arguments;
-            arguments << "-splash:no" << "-jar" << m_plantUmlPath.absoluteFilePath() << "-version";
-            m_process->start(m_javaPath.absoluteFilePath(), arguments);
+            { // Determine plantuml version
+                m_plantUmlVersion = tr("Unknown");
+                m_process = new QProcess(this);
+                m_process->setWorkingDirectory(m_plantUmlPath.absolutePath());
+                m_process->setProcessChannelMode(QProcess::MergedChannels);
+                QStringList arguments;
+                arguments << "-splash:no" << "-jar" << m_plantUmlPath.absoluteFilePath() << "-version";
+                m_process->start(m_javaPath.absoluteFilePath(), arguments);
 
-            if (!m_process->waitForStarted()) {
-                qDebug() << "refresh subprocess failed to start";
-            } else {
-                QByteArray data;
+                if (!m_process->waitForStarted()) {
+                    qDebug() << "refresh subprocess failed to start";
+                } else {
+                    QByteArray data;
 
-                while (m_process->waitForReadyRead()) {
-                    data.append(m_process->readAll());
+                    while (m_process->waitForReadyRead()) {
+                        data.append(m_process->readAll());
+                    }
+
+                    QRegExp regex("version (\\d+)");
+                    int pos = 0;
+                    pos = regex.indexIn(data.data(), pos);
+
+                    if (pos > -1) {
+                        m_plantUmlVersion = regex.cap(1);
+                    }
                 }
 
-                QRegExp regex("version (\\d+)");
-                int pos = 0;
-                pos = regex.indexIn(data.data(), pos);
-
-                if (pos > -1) {
-                    m_plantUmlVersion = regex.cap(1);
-                }
+                //delete m_process;
+                m_process = 0;
             }
-
-            //delete m_process;
-	    m_process = 0;
         }
 
-        m_useCustomGraphviz = settings.value(SETTINGS_USE_CUSTOM_GRAPHVIZ, SETTINGS_USE_CUSTOM_GRAPHVIZ_DEFAULT).toBool();
-        m_customGraphvizPath = settings.value(SETTINGS_CUSTOM_GRAPHVIZ_PATH, SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT).toString();
+        // dot.exe
+        {
+            m_useCustomGraphviz = settings.value(SETTINGS_USE_CUSTOM_GRAPHVIZ, SETTINGS_USE_CUSTOM_GRAPHVIZ_DEFAULT).toBool();
+            m_customGraphvizPath = settings.value(SETTINGS_CUSTOM_GRAPHVIZ_PATH, SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT).toString();
 
-        m_graphvizPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomGraphviz ? m_customGraphvizPath : SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT));
+            m_graphvizPath = QFileInfo(ExpandEnvironmentVariables(m_useCustomGraphviz ? m_customGraphvizPath : SETTINGS_CUSTOM_GRAPHVIZ_PATH_DEFAULT));
 
-        { // Determine graphviz version
-            m_graphvizVersion = tr("Unknown");
-            m_process = new QProcess(this);
-            m_process->setWorkingDirectory(m_graphvizPath.absolutePath());
-            m_process->setProcessChannelMode(QProcess::MergedChannels);
-            QStringList arguments;
-            arguments << "-V";
-            m_process->start(m_graphvizPath.absoluteFilePath(), arguments);
+            { // Determine graphviz version
+                m_graphvizVersion = tr("Unknown");
+                m_process = new QProcess(this);
+                m_process->setWorkingDirectory(m_graphvizPath.absolutePath());
+                m_process->setProcessChannelMode(QProcess::MergedChannels);
+                QStringList arguments;
+                arguments << "-V";
+                m_process->start(m_graphvizPath.absoluteFilePath(), arguments);
 
-            if (!m_process->waitForStarted()) {
-                qDebug() << "refresh subprocess failed to start";
-            } else {
-                QByteArray data;
+                if (!m_process->waitForStarted()) {
+                    qDebug() << "refresh subprocess failed to start";
+                } else {
+                    QByteArray data;
 
-                while (m_process->waitForReadyRead()) {
-                    data.append(m_process->readAll());
+                    while (m_process->waitForReadyRead()) {
+                        data.append(m_process->readAll());
+                    }
+
+                    QRegExp regex("version (\\S+)");
+                    int pos = 0;
+                    pos = regex.indexIn(data.data(), pos);
+
+                    if (pos > -1) {
+                        m_graphvizVersion = regex.cap(1);
+                    }
                 }
 
-                QRegExp regex("version (\\S+)");
-                int pos = 0;
-                pos = regex.indexIn(data.data(), pos);
-
-                if (pos > -1) {
-                    m_graphvizVersion = regex.cap(1);
-                }
+                //delete m_process;
+                m_process = 0;
             }
-
-            //delete m_process;
-	    m_process = 0;
         }
 
         checkPaths();
@@ -854,8 +867,10 @@ void MainWindow::readSettings(bool reload) {
 
     settings.beginGroup(SETTINGS_PREF_ASSISTANT);
     {
+        // assistant.xml
         reloadAssistantXml(settings.value(SETTINGS_ASSISTANT_XML_PATH).toString());
 
+        // assistant font
         QFont assistantFont;
         QFont defaultFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
         defaultFont.setPointSize(defaultFont.pointSize()-2);
@@ -866,6 +881,7 @@ void MainWindow::readSettings(bool reload) {
 
     settings.beginGroup(SETTINGS_PREF_PREVIEW);
     {
+        // cache
         m_useCache = settings.value(SETTINGS_USE_CACHE, SETTINGS_USE_CACHE_DEFAULT).toBool();
         m_useCustomCache = settings.value(SETTINGS_USE_CUSTOM_CACHE, SETTINGS_USE_CUSTOM_CACHE_DEFAULT).toBool();
         m_customCachePath = settings.value(SETTINGS_CUSTOM_CACHE_PATH, DEFAULT_CACHE_PATH).toString();
@@ -882,6 +898,10 @@ void MainWindow::readSettings(bool reload) {
                          ) {
             return new FileCacheItem(path, key, cost, date_time, parent);
         });
+        // autorefresh
+        m_autoRefreshTimer->stop();
+        m_autoRefreshTimer->setInterval(settings.value(SETTINGS_AUTOREFRESH_TIMEOUT, SETTINGS_AUTOREFRESH_TIMEOUT_DEFAULT).toInt());
+        m_autoRefreshTimer->start();
     }
     settings.endGroup();
 
@@ -917,10 +937,11 @@ void MainWindow::readSettings(bool reload) {
 
         const bool autorefresh_enabled = settings.value(SETTINGS_AUTOREFRESH_ENABLED, false).toBool();
         m_autoRefreshAction->setChecked(autorefresh_enabled);
-        m_autoRefreshTimer->setInterval(settings.value(SETTINGS_AUTOREFRESH_TIMEOUT, SETTINGS_AUTOREFRESH_TIMEOUT_DEFAULT).toInt());
 
         if (autorefresh_enabled) {
             m_autoRefreshTimer->start();
+        } else {
+            m_autoRefreshTimer->stop();
         }
 
         m_autoRefreshLabel->setEnabled(autorefresh_enabled);
@@ -958,12 +979,13 @@ void MainWindow::writeSettings() {
 
     settings.beginGroup(SETTINGS_PREF_PROGRAMS);
     {
+        // java.exe
         settings.setValue(SETTINGS_USE_CUSTOM_JAVA, m_useCustomJava);
         settings.setValue(SETTINGS_CUSTOM_JAVA_PATH, m_customJavaPath);
-
+        // plantuml.jar
         settings.setValue(SETTINGS_USE_CUSTOM_PLANTUML, m_useCustomPlantUml);
         settings.setValue(SETTINGS_CUSTOM_PLANTUML_PATH, m_customPlantUmlPath);
-
+        // dot.exe
         settings.setValue(SETTINGS_USE_CUSTOM_GRAPHVIZ, m_useCustomGraphviz);
         settings.setValue(SETTINGS_CUSTOM_GRAPHVIZ_PATH, m_customGraphvizPath);
     }
@@ -971,42 +993,49 @@ void MainWindow::writeSettings() {
 
     settings.beginGroup(SETTINGS_PREF_ASSISTANT);
     {
+        // assistant.xml
         settings.setValue(SETTINGS_ASSISTANT_XML_PATH, m_assistantXmlPath);
-
-        // font
+        // assistant font
+        settings.setValue(SETTINGS_ASSISTANT_FONT, m_assistantCodePreview->font().toString());
     }
     settings.endGroup();
 
     settings.beginGroup(SETTINGS_PREF_PREVIEW);
     {
+        // cache
         settings.setValue(SETTINGS_USE_CACHE, m_useCache);
         settings.setValue(SETTINGS_USE_CUSTOM_CACHE, m_useCustomCache);
         settings.setValue(SETTINGS_CUSTOM_CACHE_PATH, m_customCachePath);
-        settings.setValue(SETTINGS_CACHE_MAX_SIZE, m_cacheMaxSize);
-
+        settings.setValue(SETTINGS_CACHE_MAX_SIZE, m_cacheMaxSize);        
+        // refresh
         settings.setValue(SETTINGS_AUTOREFRESH_TIMEOUT, m_autoRefreshTimer->interval());
-
-        // refresh on save
+        settings.setValue(SETTINGS_PREVIEW_REFRESH_ON_SAVE, m_refreshOnSave);
     }
     settings.endGroup();
 
     settings.beginGroup(SETTINGS_PREF_EDITOR);
     {
-        // font
+        // font (Oxygen Mono,11,-1,5,50,0,0,0,0,0)
+        settings.setValue(SETTINGS_EDITOR_FONT, m_editor->font().toString());
         // autoindent
+        settings.setValue(SETTINGS_EDITOR_INDENT, m_editor->autoIndent());
         // use spaces instead tabs
+        settings.setValue(SETTINGS_EDITOR_INDENT_WITH_SPACE, m_editor->indentWithSpace());
+        settings.setValue(SETTINGS_EDITOR_INDENT_SIZE, m_editor->indentSize());
+
         // load last file
+        settings.setValue(SETTINGS_USE_LAST_DOCUMENT, m_useLastDocument);
     }
     settings.endGroup();
 
     settings.beginGroup(SETTINGS_WIN);
     {
+        // from menu
         settings.setValue(SETTINGS_IMAGE_FORMAT, m_imageFormatNames[m_currentImageFormat]);
         settings.setValue(SETTINGS_AUTOREFRESH_ENABLED, m_autoRefreshAction->isChecked());
         settings.setValue(SETTINGS_AUTOSAVE_IMAGE_ENABLED, m_autoSaveImageAction->isChecked());
-
+        // window state
         settings.setValue(SETTINGS_EDITOR_LAST_DIR, m_lastDir);
-
         settings.setValue(SETTINGS_WIN_GEOMETRY, saveGeometry());
         settings.setValue(SETTINGS_WINDOW_STATE, saveState());
         settings.setValue(SETTINGS_SHOW_STATUSBAR, m_showStatusBarAction->isChecked());
@@ -1142,7 +1171,7 @@ void MainWindow::exportImage(const QString& filename) {
             dir = m_exportPath;
         }
         else {
-            dir = m_documentPath;
+            dir = QString(m_documentPath);
         }
 
         dir = dir.replace(QRegExp("\\.\\w{1,10}$"), ".png");
@@ -1190,14 +1219,14 @@ void MainWindow::exportImage(const QString& filename) {
                 file.write(m_cachedImage);
             }
             else {
-                generateImage(tmpFilename, fileExtension);
+                generateImage(tmpFilename, fileExtension, NULL, true);
             }
         } else if(fileExtension == "svg") {
             if(m_currentImageFormat == SvgFormat) {
                 file.write(m_cachedImage);
             }
             else {
-                generateImage(tmpFilename, fileExtension);
+                generateImage(tmpFilename, fileExtension, NULL, true);
             }
         } else if(fileExtension == "eps"  ||
                   fileExtension == "pdf"  ||
@@ -1206,7 +1235,7 @@ void MainWindow::exportImage(const QString& filename) {
                   fileExtension == "html" ||
                   fileExtension == "atxt" ||
                   fileExtension == "utxt" ) {
-            generateImage(tmpFilename, fileExtension);
+            generateImage(tmpFilename, fileExtension, NULL, true);
         }
         else {
             // unknown file extension
@@ -1236,7 +1265,7 @@ void MainWindow::exportImage(const QString& filename) {
  * @param src      PlantUML code or NULL = current editor code.
  * @return Success.
  */
-bool MainWindow::generateImage(const QString& filename, const QString& format, const QString& code){
+bool MainWindow::generateImage(const QString& filename, const QString& format, const QString& code, const bool keepPlantUmlFile){
 
     if (!m_hasValidPaths) {
         qDebug() << "please configure paths for plantuml and java. aborting...";
@@ -1310,7 +1339,9 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     process->waitForFinished();
     process->close();
 
-    QFile::remove(plantUmlFile);
+    if(!keepPlantUmlFile) {
+        QFile::remove(plantUmlFile);
+    }
 
     qDebug() << "file" << filename << "generated";
 
