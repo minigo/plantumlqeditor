@@ -198,7 +198,7 @@ void TextEdit::keyPressEvent(QKeyEvent *e)
                 }
             }
 
-            break;
+            return; //break;
         }
 
         case Qt::Key_Tab:
