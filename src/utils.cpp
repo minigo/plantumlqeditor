@@ -79,7 +79,9 @@ QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath)
         }
     }
 
-    withoutVariables.replace("\\", "/"); // Qt handles the separators
+    if(pIsPath) {
+        withoutVariables.replace("\\", "/"); // Qt handles the separators but not \n (newline)
+    }
 
     qDebug() << "ENV >" << withoutVariables << "\n";
     return withoutVariables;
