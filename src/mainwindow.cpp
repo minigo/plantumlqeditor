@@ -1253,7 +1253,7 @@ void MainWindow::exportImage(const QString& filename) {
         m_exportPathLabel->setText("");
         m_exportPathLabel->setEnabled(false);
     } else {
-        m_exportImageAction->setText(EXPORT_TO_MENU_FORMAT_STRING.arg(""));
+        m_exportImageAction->setText(EXPORT_TO_MENU_FORMAT_STRING.arg(tmpFilename));
         m_exportPath = tmpFilename;
         QString short_tmp_name = QFileInfo(tmpFilename).fileName();
         statusBar()->showMessage(tr("Image exported to %1").arg(/*short_*/tmpFilename), STATUSBAR_TIMEOUT);
