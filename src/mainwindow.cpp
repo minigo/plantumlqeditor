@@ -1208,6 +1208,7 @@ void MainWindow::exportImage(const QString& filename) {
         return;
     }
 
+    QString error;
     QRegExp ext("\\.(\\w{3,4})$");
     if (ext.indexIn(tmpFilename) > -1) {
         QString fileExtension = ext.cap(1);
@@ -1238,22 +1239,27 @@ void MainWindow::exportImage(const QString& filename) {
             generateImage(tmpFilename, fileExtension, NULL, true);
         }
         else {
-            // unknown file extension
-            file.write(m_cachedImage);
+            error = tr("Unknown file extension %1").arg(fileExtension);
         }
     }
-    else {
-        // no file extension
-        file.write(m_cachedImage);
+    else { 
+        error = tr("No file extension %1").arg(tmpFilename);
     }
 
-//    file.write(m_cachedImage);
-    m_exportImageAction->setText(EXPORT_TO_MENU_FORMAT_STRING.arg(tmpFilename));
-    m_exportPath = tmpFilename;
-    QString short_tmp_name = QFileInfo(tmpFilename).fileName();
-    statusBar()->showMessage(tr("Image exported to %1").arg(/*short_*/tmpFilename), STATUSBAR_TIMEOUT);
-    m_exportPathLabel->setText(EXPORT_TO_LABEL_FORMAT_STRING.arg(short_tmp_name));
-    m_exportPathLabel->setEnabled(true);
+    if(!error.isEmpty()) {
+        m_exportImageAction->setText(EXPORT_TO_MENU_FORMAT_STRING.arg(""));
+        m_exportPath = "";
+        statusBar()->showMessage(error, STATUSBAR_TIMEOUT);
+        m_exportPathLabel->setText("");
+        m_exportPathLabel->setEnabled(false);
+    } else {
+        m_exportImageAction->setText(EXPORT_TO_MENU_FORMAT_STRING.arg(""));
+        m_exportPath = tmpFilename;
+        QString short_tmp_name = QFileInfo(tmpFilename).fileName();
+        statusBar()->showMessage(tr("Image exported to %1").arg(/*short_*/tmpFilename), STATUSBAR_TIMEOUT);
+        m_exportPathLabel->setText(EXPORT_TO_LABEL_FORMAT_STRING.arg(short_tmp_name));
+        m_exportPathLabel->setEnabled(true);
+    }
 }
 
 /**
@@ -1340,7 +1346,10 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     process->close();
 
     if(!keepPlantUmlFile) {
-        QFile::remove(plantUmlFile);
+        if(plantUmlFile != m_documentPath) {
+            qDebug() << "delete temp. plantuml file" << plantUmlFile;
+            QFile::remove(plantUmlFile);
+        }
     }
 
     qDebug() << "file" << filename << "generated";
