@@ -2227,8 +2227,8 @@
             ""Date ................. : "" ${DATE}
             ""Time ................. : "" ${TIME}
             ""Timestamp ............ : "" ${NOW}
-            ""Timestamp short....... : "" ${NOW:L}
-            ""Timestamp long ....... : "" ${NOW:S}
+            ""Timestamp short....... : "" ${NOW:S}
+            ""Timestamp long ....... : "" ${NOW:L}
             ""Formatted timestamp .. : "" ${NOW:MMMM ''yy  hh:mm ap}
             See [[http://doc.qt.io/qt-5/qdatetime.html#toString]] for format informaton.
 
