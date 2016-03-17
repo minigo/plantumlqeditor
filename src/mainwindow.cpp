@@ -1220,14 +1220,14 @@ void MainWindow::exportImage(const QString& filename) {
                 file.write(m_cachedImage);
             }
             else {
-                generateImage(tmpFilename, fileExtension, NULL, true);
+                generateImage(tmpFilename, fileExtension, NULL, false);
             }
         } else if(fileExtension == "svg") {
             if(m_currentImageFormat == SvgFormat) {
                 file.write(m_cachedImage);
             }
             else {
-                generateImage(tmpFilename, fileExtension, NULL, true);
+                generateImage(tmpFilename, fileExtension, NULL, false);
             }
         } else if(fileExtension == "eps"  ||
                   fileExtension == "pdf"  ||
@@ -1236,7 +1236,7 @@ void MainWindow::exportImage(const QString& filename) {
                   fileExtension == "html" ||
                   fileExtension == "atxt" ||
                   fileExtension == "utxt" ) {
-            generateImage(tmpFilename, fileExtension, NULL, true);
+            generateImage(tmpFilename, fileExtension, NULL, false);
         }
         else {
             error = tr("Unknown file extension %1").arg(fileExtension);
@@ -1283,7 +1283,7 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
     if(code == NULL) {
         // use editor code
         if(!m_editor->isEmpty()) {
-            src = m_editor->toPlainText().toUtf8().trimmed();
+            src = prepareCodeFinal(m_editor->toPlainText()).toUtf8().trimmed();
         }
     }
     else {
