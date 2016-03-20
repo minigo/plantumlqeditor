@@ -7,7 +7,14 @@
 TARGET = plantumlqeditor
 TEMPLATE = app
 
-QT += core gui svg widgets webkitwidgets
+QT += core gui svg widgets
+
+lessThan(QT_VERSION, 5.6) {
+    QT += webkitwidgets
+    DEFINES += USE_WEBKIT
+} else {
+    QT += webenginewidgets
+}
 
 win32:RC_ICONS += resources/icon.ico
 macx:ICON = resources/icon.icns
