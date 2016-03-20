@@ -1,7 +1,12 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
+#ifdef USE_WEBKIT
 #include <QWebView>
+#else
+#include <QWebEngineView>
+#define QWebView QWebEngineView
+#endif
 
 #include <src/previewwidgetweb.h>
 
