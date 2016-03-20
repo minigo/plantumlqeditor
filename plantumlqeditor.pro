@@ -10,6 +10,7 @@ TEMPLATE = app
 QT += core gui svg widgets webkitwidgets
 
 win32:RC_ICONS += resources/icon.ico
+macx:ICON = resources/icon.icns
 
 #-------------------------------------------------
 
