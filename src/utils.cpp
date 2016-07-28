@@ -50,8 +50,10 @@ QString ExpandEnvironmentVariables(const QString& pWithVariables, bool pIsPath)
             // Windoof is not case sensitive => try upper case if not exist
             if(!env.contains(varName)) varName = varName.toUpper();
 
-            /**/ if(varName == "USERNAME") varName = "USER";
-            else if(varName == "HOMEPATH") varName = "HOME";
+            /**/ if(varName == "USERNAME")  varName = "USER";
+            else if(varName == "CUSER")     varName = "USER"; // CUSER = current user (FUSER = file user)
+            else if(varName == "CUSERNAME") varName = "USER"; // CUSERNAME like CUSER
+            else if(varName == "HOMEPATH")  varName = "HOME";
             else if((varName == "TEMP" || varName == "TMP" ) && !env.contains(varName)) {
                 env.insert(varName, "/tmp");
             }

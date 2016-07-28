@@ -8,10 +8,10 @@
 
 namespace {
   const char* APPLICATION_NAME    = "PlantUML QEditor";
-  const char* APPLICATION_VERSION = "2.0";
-  const char* ORGANIZATION_NAME   = "Ionutz Borcoman";
-  const char* ORGANIZATION_DOMAIN = "borco.net";
-  // => conf file: ~/.config/Ionutz Borcoman/PlantUML QEditor.conf
+  const char* APPLICATION_VERSION = "2.0";  
+  const char* ORGANIZATION_NAME   = "jalbersol";
+  const char* ORGANIZATION_DOMAIN = "github.com";
+  // => conf file: ~/.config/jalbersol/PlantUML QEditor.conf
 
   const char* OPTION_HELP_SHORT        = "-h";
   const char* OPTION_HELP_LONG         = "--help";

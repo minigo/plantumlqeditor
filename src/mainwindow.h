@@ -45,6 +45,9 @@ public slots:
 private slots:
     void about();
     void onReferenceGuide();
+    void onPlantUmlHome();
+    void onPlantUmlNews();
+    void onPlantUmlQA();
     void refresh ( bool forced = false );
     void refreshFinished();
     void changeImageFormat();
@@ -208,6 +211,9 @@ private:
     QMenu* m_helpMenu;
     QAction* m_aboutAction;
     QAction* m_referenceGuideAction;
+    QAction* m_plantUmlHome;
+    QAction* m_plantUmlNews;
+    QAction* m_plantUmlQA;
     QAction* m_aboutQtAction;
 
     QSignalMapper* m_assistantInsertSignalMapper;

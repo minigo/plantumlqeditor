@@ -2,6 +2,16 @@
 <!--
     1. Don't add @start... or @end... .
     2. Use temp. @startuml notation and use ditaa/jcckit/digraph/graph in the first line.
+
+	<assistants>
+		<assistant name="Assistant Name">
+		    <item name="Item Name 1"><![CDATA[
+		    ]]></item>
+		    <item name="Item Name 2"><![CDATA[
+			    <notes>Optional notes</notes>
+		    </item>
+	    </assistants>
+    </assistants>
 -->
 <assistants>
   <assistant name="Class Diagrams">
@@ -341,6 +351,11 @@
   </assistant>
   <assistant name="Sequence Diagrams">
     <item name="Simple sequence"><![CDATA[
+    skinparam sequenceArrowThickness 2
+    skinparam maxmessagesize 80
+    'skinparam roundcorner 20
+    'skinparam sequenceParticipant underline
+
     Alice -> Bob: Authentication Request
     Bob --> Alice: Authentication Response
 
@@ -792,8 +807,138 @@
     DA - [First Component]
     [First Component] ..> HTTP : use
     ]]></item>
+	<item name="Deployment Diagram"><![CDATA[
+    artifact artifact
+    actor actor
+    folder folder
+    node node
+    frame frame
+    cloud cloud
+    database database
+    storage storage
+    agent agent
+    usecase usecase
+    component component
+    boundary boundary
+    control control
+    entity entity
+    interface interface
+	]]></item>
+    <item name="Linking 1"><![CDATA[
+    node node1
+    node node2
+    node node3
+    node node4
+    node node5
+    node1 -- node2
+    node1 .. node3
+    node1 ~~ node4
+    node1 == node5
+	]]></item>
+    <item name="Linking 2"><![CDATA[
+    artifact artifact1
+    artifact artifact2
+    artifact artifact3
+    artifact artifact4
+    artifact artifact5
+    artifact artifact6
+    artifact artifact7
+    artifact artifact8
+    artifact artifact9
+    artifact artifact10
+    artifact1 --> artifact2
+    artifact1 --* artifact3
+    artifact1 --o artifact4
+    artifact1 --+ artifact5
+    artifact1 --# artifact6
+    artifact1 -->> artifact7
+    artifact1 --0 artifact8
+    artifact1 --^ artifact9
+    artifact1 --(0 artifact10
+	]]></item>
+    <item name="Linking 3"><![CDATA[
+	cloud cloud1
+	cloud cloud2
+	cloud cloud3
+	cloud cloud4
+	cloud cloud5
+	cloud1 -0- cloud2
+	cloud1 -0)- cloud3
+	cloud1 -(0- cloud4
+	cloud1 -(0)- cloud5
+	]]></item>
+    <item name="Packages"><![CDATA[
+    artifact FooA1 {
+      folder FooA2
+    }
+
+    folder FooA3 {
+      artifact FooA4
+    }
+
+    frame FooA5 {
+      database FooA6
+    }
+
+    node FooB1 {
+     cloud FooB2
+    }
+
+    cloud FooB3 {
+      frame FooB4
+    }
+
+    database FooB5  {
+      storage FooB6
+    }
+
+    storage FooB7 {
+      storage FooB8
+    }
+	]]></item>
+    <item name="Separators"><![CDATA[
+    folder folder [
+    This is an <b>folder
+    ----
+    You can use separator
+    ====
+    of different kind
+    ....
+    and style
+    ]
+
+    node node [
+    This is a <b>node
+    ----
+    You can use separator
+    ====
+    of different kind
+    ....
+    and style
+    ]
+
+    database database [
+    This is a <b>database
+    ----
+    You can use separator
+    ====
+    of different kind
+    ....
+    and style
+    ]
+
+    usecase usecase [
+    This is a <b>usecase
+    ----
+    You can use separator
+    ====
+    of different kind
+    ....
+    and style
+    ]
+	]]></item>
     <item name="Skinparam 1"><![CDATA[
-    skinparam component {
+		skinparam component {
         FontSize 13
         InterfaceBackgroundColor RosyBrown
         InterfaceBorderColor orange
@@ -2220,16 +2365,48 @@
         legend
             Runtime variables will be substituted by PlantUML QEditor before image generation.
 
-            ""Username ............. : "" ${USER}
-            ""Path ................. : "" ${PATH}
+            '
+            ' same on Unix and Windows:
+            ' - ${USER} ${CUSER} ${USERNAME} ${CUSERNAME} %USER% %CUSER% %USERNAME% %CUSERNAME%
+            ' - ${HOME} ${HOMEPATH} %HOME% %HOMEPATH%
+            ' always the same:
+            ' - FILE CFILE FFILE
+            ' - PATH CPATH FPATH
+            ' - DIR CDIR FDIR
+            '
+            __Default:__
+            '                             Windows style
+            ""Username ............. : "" %USERNAME%
+            ""Path ................. : "" %PATH%
+            ""Filename ............. : "" %FILE%
+            ""Directory ............ : "" %DIR%
+            ""Date ................. : "" %DATE%
+            ""Time ................. : "" %TIME%
+            ""Timestamp ............ : "" %NOW%
+            ""Timestamp short....... : "" %NOW:S%
+            ""Timestamp long ....... : "" %NOW:L%
+            ""Formatted timestamp .. : "" %NOW:MMMM ''yy  hh:mm ap%
+            __Current:__
+            ' C prefix                    (Unix style)
+            ""Username ............. : "" ${CUSER}
+            ""Path ................. : "" ${CPATH}
+            ""Filename ............. : "" ${CFILE}
+            ""Directory ............ : "" ${CDIR}
+            ""Date ................. : "" ${CDATE}
+            ""Time ................. : "" ${CTIME}
+            ""Timestamp ............ : "" ${CNOW}
+            ""Timestamp short....... : "" ${CNOW:S}
+            ""Timestamp long ....... : "" ${CNOW:L}
+            ""Formatted timestamp .. : "" ${CNOW:MMMM ''yy  hh:mm ap}
+            __File:__
+            ' F prefix                    (Unix style)
+            ""Username ............. : "" ${FUSER}
+            ""Path ................. : "" ${FPATH}
             ""Filename ............. : "" ${FILE}
-            ""Directory ............ : "" ${DIR}
-            ""Date ................. : "" ${DATE}
-            ""Time ................. : "" ${TIME}
-            ""Timestamp ............ : "" ${NOW}
-            ""Timestamp short....... : "" ${NOW:S}
-            ""Timestamp long ....... : "" ${NOW:L}
-            ""Formatted timestamp .. : "" ${NOW:MMMM ''yy  hh:mm ap}
+            ""Directory ............ : "" ${FDIR}
+            ""Date ................. : "" ${FDATE}
+            ""Time ................. : "" ${FTIME}
+
             See [[http://doc.qt.io/qt-5/qdatetime.html#toString]] for format informaton.
 
             You can use Unix like ${...} or Windows like %...% variable format!

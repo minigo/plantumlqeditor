@@ -309,6 +309,18 @@ void MainWindow::onReferenceGuide() {
     }
 }
 
+void MainWindow::onPlantUmlHome() {
+    QDesktopServices::openUrl(QUrl("http://plantuml.com/"));
+}
+
+void MainWindow::onPlantUmlNews() {
+    QDesktopServices::openUrl(QUrl("http://plantuml.com/news.html"));
+}
+
+void MainWindow::onPlantUmlQA() {
+    QDesktopServices::openUrl(QUrl("http://plantuml.sourceforge.net/qa/"));
+}
+
 QString MainWindow::makeKeyForDocument(QByteArray current_document) {
     QString key = QString("%1.%2")
                   .arg(QString::fromUtf8(QCryptographicHash::hash(current_document, QCryptographicHash::Md5).toHex()))
@@ -1056,7 +1068,7 @@ void MainWindow::openDocument(const QString& name) {
         tmp_name = QFileDialog::getOpenFileName(this,
                    tr("Select a file to open"),
                    m_lastDir,
-                   "PlantUML (*.plantuml);; All Files (*.*)"
+                   "PlantUML (*.plantuml *.puml);; All Files (*.*)"
                                                );
 
         if (tmp_name.isEmpty()) {
@@ -1092,7 +1104,7 @@ bool MainWindow::saveDocument(const QString& name) {
         file_path = QFileDialog::getSaveFileName(this,
                     tr("Select where to store the document"),
                     m_lastDir,
-                    "PlantUML (*.plantuml);; All Files (*.*)"
+                    "PlantUML (*.plantuml *.puml);; All Files (*.*)"
                                                 );
 
         if (file_path.isEmpty()) {
@@ -1461,8 +1473,20 @@ void MainWindow::createActions() {
         connect(m_aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 
         m_referenceGuideAction = new QAction(getIcon("help-hint"), tr("&Reference Guide"), this);
-        m_referenceGuideAction->setStatusTip(tr("Show PlantUML Reference Guide"));
+        m_referenceGuideAction->setStatusTip(tr("Show PlantUML Reference Guide (PDF Viewer or Browser)"));
         connect(m_referenceGuideAction, SIGNAL(triggered()), this, SLOT(onReferenceGuide()));
+
+        m_plantUmlHome = new QAction(getIcon("text-html"), tr("&PlantUml Homepage"), this);
+        m_plantUmlHome->setStatusTip(tr("Show PlantUML Homepage"));
+        connect(m_plantUmlHome, SIGNAL(triggered()), this, SLOT(onPlantUmlPage()));
+
+        m_plantUmlNews = new QAction(getIcon("text-html"), tr("&PlantUml News"), this);
+        m_plantUmlNews->setStatusTip(tr("Show PlantUML News"));
+        connect(m_plantUmlNews, SIGNAL(triggered()), this, SLOT(onPlantUmlNews()));
+
+        m_plantUmlQA = new QAction(getIcon("text-html"), tr("&PlantUml Question and Answer"), this);
+        m_plantUmlQA->setStatusTip(tr("Show PlantUML Question and Answer"));
+        connect(m_plantUmlQA, SIGNAL(triggered()), this, SLOT(onPlantUmlQA()));
 
         m_aboutQtAction = new QAction(getIcon("help-about-qt"), tr("About &Qt"), this);
         m_aboutQtAction->setStatusTip(tr("Show the Qt library's About box"));
@@ -1575,8 +1599,15 @@ void MainWindow::createMenus() {
     { // Help
         m_helpMenu = menuBar()->addMenu(tr("&Help"));
         m_helpMenu->addAction(m_aboutAction);
-        m_helpMenu->addAction(m_referenceGuideAction);
-        m_helpMenu->addAction(m_aboutQtAction);
+
+        QMenu* plantUmlPages = m_helpMenu->addMenu(getIcon("text-html"), "PlantUML");
+        plantUmlPages->addAction(m_referenceGuideAction);
+        plantUmlPages->addSeparator();
+        plantUmlPages->addAction(m_plantUmlHome);
+        plantUmlPages->addAction(m_plantUmlNews);
+        plantUmlPages->addAction(m_plantUmlQA);
+
+        m_helpMenu->addAction(m_aboutQtAction);        
     }
 }
 
@@ -1944,35 +1975,48 @@ QString MainWindow::prepareCodeFinal(const QString& codeBefore) {
 
     QString code = codeBefore; //prepareCode(codeBefore, addTags);
 
-    QDateTime dateTime = QDateTime::currentDateTime();
-    code.replace(QRegExp("(\\$\\{DATE\\}|%DATE%)"),   dateTime.toString("yyyy-mm-dd"));
-    code.replace(QRegExp("(\\$\\{TIME\\}|%TIME%)"),   dateTime.toString("hh:mm:ss"));
-    code.replace(QRegExp("(\\$\\{NOW\\}|%NOW%)"),     dateTime.toString(Qt::ISODate));
-    code.replace(QRegExp("(\\$\\{NOW:L\\}|%NOW:L%)"), dateTime.toString(Qt::SystemLocaleLongDate));
-    code.replace(QRegExp("(\\$\\{NOW:S\\}|%NOW:S%)"), dateTime.toString(Qt::SystemLocaleShortDate));
+    // current date/time
+    QDateTime cDateTime = QDateTime::currentDateTime();
+    code.replace(QRegExp("(\\$\\{C?DATE\\}|%C?DATE%)"), cDateTime.toString("yyyy-MM-dd"));
+    code.replace(QRegExp("(\\$\\{C?TIME\\}|%C?TIME%)"), cDateTime.toString("hh:mm:ss"));
+    code.replace(QRegExp("(\\$\\{C?NOW\\}|%C?NOW%)"),       cDateTime.toString(Qt::ISODate));
+    code.replace(QRegExp("(\\$\\{C?NOW:L\\}|%C?NOW:L%)"),   cDateTime.toString(Qt::SystemLocaleLongDate));
+    code.replace(QRegExp("(\\$\\{C?NOW:S\\}|%C?NOW:S%)"),   cDateTime.toString(Qt::SystemLocaleShortDate));
 
-    QRegExp dateTimeFormatUnix("([$][{]NOW:([^}]+)[}])");
+    QRegExp dateTimeFormatUnix("([$][{]C?NOW:([^}]+)[}])");
     int pos = 0;
     while ((pos = dateTimeFormatUnix.indexIn(code, pos)) != -1) {
-        code.replace(dateTimeFormatUnix.cap(1), dateTime.toString(dateTimeFormatUnix.cap(2)));
+        code.replace(dateTimeFormatUnix.cap(1), cDateTime.toString(dateTimeFormatUnix.cap(2)));
         pos += dateTimeFormatUnix.matchedLength();
     }
-    QRegExp dateTimeFormatWin("([%]NOW:([^%]+)[%])");
+    QRegExp dateTimeFormatWin("([%]C?NOW:([^%]+)[%])");
     pos = 0;
     while ((pos = dateTimeFormatWin.indexIn(code, pos)) != -1) {
-        code.replace(dateTimeFormatWin.cap(1), dateTime.toString(dateTimeFormatWin.cap(2)));
+        code.replace(dateTimeFormatWin.cap(1), cDateTime.toString(dateTimeFormatWin.cap(2)));
         pos += dateTimeFormatWin.matchedLength();
     }
 
     if(m_documentPath.isEmpty()){
-        code.replace(QRegExp("(\\$\\{PATH\\}|%PATH%)"), "???");
-        code.replace(QRegExp("(\\$\\{FILE\\}|%FILE%)"), "???");
-        code.replace(QRegExp("(\\$\\{DIR\\}|%DIR%)"),   "???");
+        code.replace(QRegExp("(\\$\\{[CF]?PATH\\}|%[CF]?PATH%)"), "???");
+        code.replace(QRegExp("(\\$\\{[CF]?FILE\\}|%[CF]?FILE%)"), "???");
+        code.replace(QRegExp("(\\$\\{[CF]?DIR\\}|%[CF]?DIR%)"),   "???");
+
+        code.replace(QRegExp("(\\$\\{FDATE\\}|%FDATE%)"),         "???");
+        code.replace(QRegExp("(\\$\\{FTIME\\}|%FTIME%)"),         "???");
+
+        code.replace(QRegExp("(\\$\\{FUSER(NAME)?\\}|%FUSER(NAME)?%)"), "???");
     } else {
         QFileInfo fileInfo(m_documentPath);
-        code.replace(QRegExp("(\\$\\{PATH\\}|%PATH%)"), fileInfo.absoluteFilePath());
-        code.replace(QRegExp("(\\$\\{FILE\\}|%FILE%)"), fileInfo.fileName());
-        code.replace(QRegExp("(\\$\\{DIR\\}|%DIR%)"),   fileInfo.absolutePath());
+        code.replace(QRegExp("(\\$\\{[CF]?PATH\\}|%[CF]?PATH%)"), fileInfo.absoluteFilePath());
+        code.replace(QRegExp("(\\$\\{[CF]?FILE\\}|%[CF]?FILE%)"), fileInfo.fileName());
+        code.replace(QRegExp("(\\$\\{[CF]?DIR\\}|%[CF]?DIR%)"),   fileInfo.absolutePath());
+
+        // file date/time or user
+        QDateTime fDateTime = fileInfo.lastModified();
+        code.replace(QRegExp("(\\$\\{FDATE\\}|%FDATE%)"), fDateTime.toString("yyyy-MM-dd"));
+        code.replace(QRegExp("(\\$\\{FTIME\\}|%FTIME%)"), fDateTime.toString("hh:mm:ss"));
+
+        code.replace(QRegExp("(\\$\\{FUSER(NAME)?\\}|%FUSER(NAME)?%)"), fileInfo.owner());
     }
 
     code = ExpandEnvironmentVariables(code, false);
