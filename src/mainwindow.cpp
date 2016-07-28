@@ -211,7 +211,11 @@ QListWidget* MainWindow::newAssistantListWidget(const QSize& icon_size, QWidget*
     return view;
 }
 
-void MainWindow::newDocument() {
+void MainWindow::onNewDocument() {
+    newDocument(true);
+}
+
+void MainWindow::newDocument(bool addDefaultCode) {
 
     if (!maybeSave()) {
         return;
@@ -224,12 +228,15 @@ void MainWindow::newDocument() {
     m_exportPathLabel->setText(EXPORT_TO_LABEL_FORMAT_STRING.arg(""));
     m_exportPathLabel->setEnabled(false);
 
-    QString text = prepareCode("class Foo\nclass Bar\n\nFoo -> Bar");
-    m_editor->setPlainText(text);  // resets undo buffer => ok
     setWindowTitle(TITLE_FORMAT_STRING
                    .arg(tr("Untitled"))
-                   .arg(qApp->applicationName())
-                  );
+                   .arg(qApp->applicationName()));
+
+    if(addDefaultCode) {
+        QString text = prepareCode("class Foo\nclass Bar\n\nFoo -> Bar");
+        m_editor->setPlainText(text);  // resets undo buffer => ok
+    }
+
     setWindowModified(false);
     refresh();
 
@@ -315,6 +322,9 @@ void MainWindow::onPlantUmlHome() {
 
 void MainWindow::onPlantUmlNews() {
     QDesktopServices::openUrl(QUrl("http://plantuml.com/news.html"));
+}
+void MainWindow::onPlantUmlChanges() {
+    QDesktopServices::openUrl(QUrl("http://plantuml.com/changes.html"));
 }
 
 void MainWindow::onPlantUmlQA() {
@@ -650,6 +660,10 @@ void MainWindow::onRecentDocumentsActionTriggered(const QString& path) {
 
 void MainWindow::onAssistanItemDoubleClicked(QListWidgetItem* item) {
 
+    if (!m_documentPath.isEmpty()) {
+        newDocument(false);
+    }
+
     insertAssistantCode(item->data(ASSISTANT_ITEM_DATA_ROLE).toString());
 
     m_previewWidget->zoomOriginal();
@@ -694,13 +708,12 @@ void MainWindow::onAssistantItemSelectionChanged() {
             QString notes = item->data(ASSISTANT_ITEM_NOTES_ROLE).toString();
 
             if(notes.isEmpty()) {
-               m_assistantPreviewNotes->setText(tr("Code:"));
+                m_assistantPreviewNotes->setText("");
+                m_assistantPreviewNotes->hide();
             }
             else {
-               if(!notes.contains(QRegExp("^<(div|ol|ul|p|dl|h[1-6]|table)"))) {
-                   notes = "<br>" + notes + "<br>";
-               }
-               m_assistantPreviewNotes->setText(tr("Notes:") + notes + tr("Code:"));
+                m_assistantPreviewNotes->show();
+                m_assistantPreviewNotes->setText(notes);
             }
             m_assistantCodePreview->setPlainText(item->data(ASSISTANT_ITEM_DATA_ROLE).toString());
         }
@@ -1373,7 +1386,7 @@ void MainWindow::createActions() {
     { // File menu
         m_newDocumentAction = new QAction(getIcon("document-new"), tr("&New"), this);
         m_newDocumentAction->setShortcut(QKeySequence::New);
-        connect(m_newDocumentAction, SIGNAL(triggered()), this, SLOT(newDocument()));
+        connect(m_newDocumentAction, SIGNAL(triggered()), this, SLOT(onNewDocument()));
 
         m_openDocumentAction = new QAction(getIcon("document-open"), tr("&Open"), this);
         m_openDocumentAction->setShortcuts(QKeySequence::Open);
@@ -1483,6 +1496,10 @@ void MainWindow::createActions() {
         m_plantUmlNews = new QAction(getIcon("text-html"), tr("&PlantUml News"), this);
         m_plantUmlNews->setStatusTip(tr("Show PlantUML News"));
         connect(m_plantUmlNews, SIGNAL(triggered()), this, SLOT(onPlantUmlNews()));
+
+        m_plantUmlChanges = new QAction(getIcon("text-html"), tr("&PlantUml Chamges"), this);
+        m_plantUmlChanges->setStatusTip(tr("Show PlantUML Chamges"));
+        connect(m_plantUmlChanges, SIGNAL(triggered()), this, SLOT(onPlantUmlChanges()));
 
         m_plantUmlQA = new QAction(getIcon("text-html"), tr("&PlantUml Question and Answer"), this);
         m_plantUmlQA->setStatusTip(tr("Show PlantUML Question and Answer"));
@@ -1605,6 +1622,7 @@ void MainWindow::createMenus() {
         plantUmlPages->addSeparator();
         plantUmlPages->addAction(m_plantUmlHome);
         plantUmlPages->addAction(m_plantUmlNews);
+        plantUmlPages->addAction(m_plantUmlChanges);
         plantUmlPages->addAction(m_plantUmlQA);
 
         m_helpMenu->addAction(m_aboutQtAction);        
@@ -1690,9 +1708,13 @@ void MainWindow::createDockWindows() {
 
     QDockWidget* dock;
 
+    QFont dockFont = this->font(); // more space for assistant items
+    dockFont.setPointSize(dockFont.pointSize() - 1);
+
     { // Editor dock
 
         dock = new QDockWidget(tr("Text Editor"), this);
+        dock->setFont(dockFont);
         m_editor = new TextEdit(dock);
 
         new HighLighter(m_editor->document());
@@ -1711,8 +1733,9 @@ void MainWindow::createDockWindows() {
 
     { // Assistant dock
         m_assistantDock = dock = new QDockWidget(tr("Assistant"), this);
+        m_assistantDock->setFont(dockFont);
         m_assistantToolBox = new QToolBox(dock);
-        m_assistantToolBox->layout()->setSpacing(1); //display more content
+        m_assistantToolBox->layout()->setSpacing(0); //display more content
         dock->setWidget(m_assistantToolBox);
         dock->setObjectName("assistant");
         addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -1731,9 +1754,9 @@ void MainWindow::createDockWindows() {
 
     { // Assistant Info dock
         m_assistantInfoDock = dock = new QDockWidget(tr("Assistant Info"), this);
+        m_assistantInfoDock->setFont(dockFont);
         QWidget* widget = new QWidget(dock);
         m_assistantPreviewNotes = new QLabel(widget);
-        m_assistantPreviewNotes->setText(tr("Code:"));
         m_assistantCodePreview = new QTextEdit(widget);
         m_assistantCodePreview->setReadOnly(true);
         QBoxLayout* assistant_info_layout = new QBoxLayout(QBoxLayout::TopToBottom, widget);

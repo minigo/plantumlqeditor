@@ -1082,7 +1082,7 @@
     :foo1;
     note left: This is a note
     :foo2;
-    note right
+    note right #green
     This note is on several
     //lines// and can
     contain <b>HTML</b>

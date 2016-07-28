@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QApplication>
+#include <QStyleFactory>
 #include <QTextStream>
 
 namespace {
@@ -40,6 +41,8 @@ int main(int argc, char *argv[])
 
     QApplication application(argc, argv);
 
+    //application.setStyle(QStyleFactory::create("Fusion"));
+
     QStringList options;
     for (int i = 1; i < argc; ++i) {
         options << argv[i];
@@ -66,7 +69,7 @@ int main(int argc, char *argv[])
       if(window.useLastDocument()) {
         window.openLastDocument();
       } else {
-        window.newDocument();
+        window.newDocument(true);
       }
     } else {        
         window.openDocument(open_document_path);

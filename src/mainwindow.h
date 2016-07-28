@@ -34,19 +34,21 @@ public:
     explicit MainWindow ( bool oldPreview = false, QWidget* parent = 0 );
     ~MainWindow();
 
+    void newDocument(const bool addDefaultCode);
     void openDocument ( const QString& path );
     bool useLastDocument();
     void openLastDocument();
     bool generateImage( const QString& filename, const QString& format, const QString& src = NULL, const bool keepPlantUmlFile = false);
     bool switchPreviewModeIfNeeded();
 public slots:
-    void newDocument();
+    void onNewDocument();
 
 private slots:
     void about();
     void onReferenceGuide();
     void onPlantUmlHome();
     void onPlantUmlNews();
+    void onPlantUmlChanges();
     void onPlantUmlQA();
     void refresh ( bool forced = false );
     void refreshFinished();
@@ -213,6 +215,7 @@ private:
     QAction* m_referenceGuideAction;
     QAction* m_plantUmlHome;
     QAction* m_plantUmlNews;
+    QAction* m_plantUmlChanges;
     QAction* m_plantUmlQA;
     QAction* m_aboutQtAction;
 
