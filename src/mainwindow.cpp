@@ -551,6 +551,21 @@ void MainWindow::refreshFinished() {
         updateCacheSizeInfo();
     }
 
+    switch(m_previewWidget->getZoomAutoFitMode()) {
+    case PreviewWidget::FitBest:
+        emit m_zoomFitBestAction->trigger();
+        break;
+    case PreviewWidget::FitWidth:
+        emit m_zoomFitWidthAction->trigger();
+        break;
+    case PreviewWidget::FitHeight:
+        emit m_zoomFitHeightAction->trigger();
+        break;
+    case PreviewWidget::FitOff:
+        // NOP
+        break;
+    }
+
     if(statusBar()->currentMessage().isEmpty() || statusBar()->currentMessage() == tr(TEXT_REFRESHING)) {
         statusBar()->showMessage(tr("Refreshed"), STATUSBAR_TIMEOUT);
     }
@@ -667,6 +682,7 @@ void MainWindow::onAssistanItemDoubleClicked(QListWidgetItem* item) {
     insertAssistantCode(item->data(ASSISTANT_ITEM_DATA_ROLE).toString());
 
     m_previewWidget->zoomOriginal();
+    onZoomAutoFitOff();
 
     refresh(true);
 
@@ -1536,14 +1552,17 @@ void MainWindow::createActions() {
     { // zoom actions
         m_zoomInAction = new QAction(getIcon("zoom-in"), tr("Zoom In"), this);
         m_zoomInAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Plus));
+        connect(m_zoomInAction, SIGNAL(triggered()), this, SLOT(onZoomAutoFitOff()));
         connect(m_zoomInAction, SIGNAL(triggered()), m_previewWidget, SLOT(zoomIn()));
 
         m_zoomOutAction = new QAction(getIcon("zoom-out"), tr("Zoom Out"), this);
         m_zoomOutAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Minus));
+        connect(m_zoomOutAction, SIGNAL(triggered()), this, SLOT(onZoomAutoFitOff()));
         connect(m_zoomOutAction, SIGNAL(triggered()), m_previewWidget, SLOT(zoomOut()));
 
         m_zoomOriginalAction = new QAction(getIcon("zoom-original"), tr("1:1"), this);
         m_zoomOriginalAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_0));
+        connect(m_zoomOriginalAction, SIGNAL(triggered()), this, SLOT(onZoomAutoFitOff()));
         connect(m_zoomOriginalAction, SIGNAL(triggered()), m_previewWidget, SLOT(zoomOriginal()));
 
         m_zoomFitBestAction = new QAction(getIcon("zoom-fit-best"), tr("Fit Best"), this);
@@ -1557,6 +1576,24 @@ void MainWindow::createActions() {
         m_zoomFitHeightAction = new QAction(getIcon("zoom-fit-height"), tr("Fit Height"), this);
         m_zoomFitHeightAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
         connect(m_zoomFitHeightAction, SIGNAL(triggered()), m_previewWidget, SLOT(zoomFitHeight()));
+
+        m_zoomAutoFitAction = new QAction(getIcon("zoom-draw"), tr("Auto-Fit"), this);
+        m_zoomAutoFitAction->setCheckable(true);
+        m_zoomAutoFitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_A));
+        connect(m_zoomAutoFitAction, SIGNAL(toggled(bool)), m_previewWidget, SLOT(zoomAutoFit(bool)));
+        connect(m_zoomAutoFitAction, SIGNAL(toggled(bool)), this, SLOT(onZoomAutoFitOn(bool)));
+    }
+}
+
+void MainWindow::onZoomAutoFitOff() {
+    if(m_zoomAutoFitAction->isChecked()) {
+        m_zoomAutoFitAction->setChecked(false); // w/o event
+    }
+}
+
+void MainWindow::onZoomAutoFitOn(bool state) {
+    if(state) {
+        refresh(true);
     }
 }
 
@@ -1792,6 +1829,7 @@ void MainWindow::addZoomActions(QWidget* widget) {
     widget->addAction(m_zoomFitBestAction);
     widget->addAction(m_zoomFitWidthAction);
     widget->addAction(m_zoomFitHeightAction);
+    widget->addAction(m_zoomAutoFitAction);
 }
 
 void MainWindow::checkPaths() {

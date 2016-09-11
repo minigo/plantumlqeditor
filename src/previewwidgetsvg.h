@@ -1,4 +1,4 @@
-#ifndef PREVIEWWIDGETSVG_H
+﻿#ifndef PREVIEWWIDGETSVG_H
 #define PREVIEWWIDGETSVG_H
 
 #include <src/previewwidget.h>
@@ -22,9 +22,6 @@ public:
     void setScrollArea(QScrollArea *scrollArea);
 
 public slots:
-//    void zoomOriginal();
-//    void zoomIn();
-//    void zoomOut();
     void zoomFitBest();
     void zoomFitWidth();
     void zoomFitHeight();
