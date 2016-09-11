@@ -76,6 +76,8 @@ private slots:
     void onPrevAssistant();
     void onAssistantItemSelectionChanged();
     void onCurrentAssistantChanged ( int index );
+    void onZoomAutoFitOff();
+    void onZoomAutoFitOn(bool state);
 
 private:
     /*static*/ QIcon iconFromFile(QSize size, /*const*/ QString path, const QString data);
@@ -209,6 +211,7 @@ private:
     QAction* m_zoomFitBestAction;
     QAction* m_zoomFitWidthAction;
     QAction* m_zoomFitHeightAction;
+    QAction* m_zoomAutoFitAction;
 
     QMenu* m_helpMenu;
     QAction* m_aboutAction;

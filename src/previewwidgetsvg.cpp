@@ -56,6 +56,8 @@ int PreviewWidgetSvg::adjustZoomScale(int new_scale)
 //a1e
 void PreviewWidgetSvg::zoomFitBest()
 {
+    setZoomAutoFitMode(FitBest);
+
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
     screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
@@ -84,6 +86,8 @@ void PreviewWidgetSvg::zoomFitBest()
 //a1e
 void PreviewWidgetSvg::zoomFitWidth()
 {
+    setZoomAutoFitMode(FitWidth);
+
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
     screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
@@ -111,6 +115,8 @@ void PreviewWidgetSvg::zoomFitWidth()
 //a1e
 void PreviewWidgetSvg::zoomFitHeight()
 {
+    setZoomAutoFitMode(FitHeight);
+
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
     screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();

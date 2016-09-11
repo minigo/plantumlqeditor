@@ -172,6 +172,8 @@ void PreviewWidgetWeb::setZoomScale(int zoom_scale)
 //a1e
 void PreviewWidgetWeb::zoomFitBest()
 {
+    setZoomAutoFitMode(FitBest);
+
     zoomOriginal();
 
     float zW = (float)m_webView->width()  / m_width;
@@ -184,6 +186,8 @@ void PreviewWidgetWeb::zoomFitBest()
 //a1e
 void PreviewWidgetWeb::zoomFitWidth()
 {
+    setZoomAutoFitMode(FitWidth);
+
     zoomOriginal();
 
     float zW = (float)m_webView->width() / m_width;
@@ -195,6 +199,8 @@ void PreviewWidgetWeb::zoomFitWidth()
 //a1e
 void PreviewWidgetWeb::zoomFitHeight()
 {
+    setZoomAutoFitMode(FitHeight);
+
     zoomOriginal();
 
     float zH = (float)m_webView->height() / m_height;

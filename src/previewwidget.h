@@ -1,4 +1,4 @@
-#ifndef PREVIEWWIDGET_H
+﻿#ifndef PREVIEWWIDGET_H
 #define PREVIEWWIDGET_H
 
 #include <QObject>
@@ -14,6 +14,7 @@ class PreviewWidget : public QWidget
     Q_OBJECT
 public:
     enum Mode { NoMode, PngMode, SvgMode };
+    enum AutoFitMode { FitOff, FitBest, FitWidth, FitHeight };
 
     explicit PreviewWidget(QWidget *parent = 0);
 
@@ -23,6 +24,9 @@ public:
     virtual void load(const QByteArray &data) = 0;
     virtual void setScrollArea(QScrollArea *scrollArea) = 0;
 
+    void setZoomAutoFitMode(AutoFitMode mode);
+    AutoFitMode getZoomAutoFitMode();
+
 public slots:
     virtual void zoomOriginal();
     virtual void zoomIn();
@@ -30,6 +34,7 @@ public slots:
     virtual void zoomFitBest() = 0;
     virtual void zoomFitWidth() = 0;
     virtual void zoomFitHeight() = 0;
+    virtual void zoomAutoFit(bool state);
     virtual void wheelEvent(QWheelEvent *e) = 0;
 
 protected:    
@@ -53,6 +58,9 @@ private:
 
     virtual void onWheelZoom(QWheelEvent *e, const int steps) = 0;
     virtual void onWheelScroll(QWheelEvent *e) = 0;
+
+    bool m_zoomAutoFit;
+    AutoFitMode m_zoomAutoFitMode;
 };
 
 #endif // PREVIEWWIDGET_H
