@@ -490,15 +490,23 @@ void MainWindow::refresh(bool forced) {
     m_lastKey = key;
     m_process = new QProcess(this);
 
+    QFileInfo *fi;
     if(!m_documentPath.isEmpty()) {
-        QFileInfo fi(m_documentPath);
-        m_process->setWorkingDirectory(fi.absolutePath());
+        fi = new QFileInfo(m_documentPath);
+        m_process->setWorkingDirectory(fi->absolutePath());
     } else if(!m_lastDir.isEmpty()) {
-        QFileInfo fi(m_lastDir);
-        m_process->setWorkingDirectory(fi.absolutePath());
+        fi = new QFileInfo(m_lastDir);
+        m_process->setWorkingDirectory(fi->absolutePath());
     } else if(!m_assistantXmlPath.isEmpty()) {
-        QFileInfo fi(m_assistantXmlPath);
-        m_process->setWorkingDirectory(fi.absolutePath());
+        fi = new QFileInfo(m_assistantXmlPath);
+        m_process->setWorkingDirectory(fi->absolutePath());
+    }
+
+    if(fi) {
+        arguments << "-D_DIRNAME_=" + fi->absolutePath();
+        arguments << "-D_FILENAME_=" + fi->fileName();
+        arguments << "-D_BASENAME_=" + fi->baseName();
+        arguments << "-D_FILEEXT_=" + fi->completeSuffix();
     }
 
     m_process->start(m_javaPath.absoluteFilePath(), arguments);
