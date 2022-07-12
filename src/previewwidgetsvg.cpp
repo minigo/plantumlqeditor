@@ -60,7 +60,7 @@ void PreviewWidgetSvg::zoomFitBest()
 
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
-    screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
+            screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
 
     zoomOriginal();
 
@@ -90,7 +90,7 @@ void PreviewWidgetSvg::zoomFitWidth()
 
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
-    screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
+            screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
 
     zoomOriginal();
 
@@ -119,7 +119,7 @@ void PreviewWidgetSvg::zoomFitHeight()
 
     screenSizeT screenSize;
     screenSize.height = m_scrollArea->visibleRegion().boundingRect().height(),
-    screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
+            screenSize.width  = m_scrollArea->visibleRegion().boundingRect().width();
 
     zoomOriginal();
 
@@ -144,62 +144,62 @@ void PreviewWidgetSvg::zoomFitHeight()
 //a1e
 void PreviewWidgetSvg::wheelEvent(QWheelEvent *e)
 {
-  if( e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
-    onWheelZoom(e, 8);
-  }
-  else if( e->modifiers() == (Qt::ControlModifier | Qt::AltModifier) ) {
-    onWheelZoom(e, 1);
-  }
-  else if( e->modifiers() == Qt::ControlModifier) {
-    onWheelZoom(e, 4);
-  }
-  else {
-    onWheelScroll(e);
-  }
+    if( e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
+        onWheelZoom(e, 8);
+    }
+    else if( e->modifiers() == (Qt::ControlModifier | Qt::AltModifier) ) {
+        onWheelZoom(e, 1);
+    }
+    else if( e->modifiers() == Qt::ControlModifier) {
+        onWheelZoom(e, 4);
+    }
+    else {
+        onWheelScroll(e);
+    }
 }
 
 void PreviewWidgetSvg::onWheelZoom(QWheelEvent *e, const int steps) {
-   if(e->delta() > 0) {
-    for(int i = steps; i>0; --i) zoomIn();
-  }
-  else {
-    for(int i = steps; i>0; --i) zoomOut();
-  }
-  e->accept();
+    if(e->delta() > 0) {
+        for(int i = steps; i>0; --i) zoomIn();
+    }
+    else {
+        for(int i = steps; i>0; --i) zoomOut();
+    }
+    e->accept();
 }
 
 void PreviewWidgetSvg::onWheelScroll(QWheelEvent *e) {
 
-  if( e->modifiers() == Qt::NoModifier) {
-    // y
-    int dy = e->delta() < 0 ? SCROLL_STEP : -SCROLL_STEP;
-    const int cy = m_scrollArea->verticalScrollBar()->value();
-    const int my = m_scrollArea->verticalScrollBar()->maximum();
-    int y = cy + dy; 
+    if( e->modifiers() == Qt::NoModifier) {
+        // y
+        int dy = e->delta() < 0 ? SCROLL_STEP : -SCROLL_STEP;
+        const int cy = m_scrollArea->verticalScrollBar()->value();
+        const int my = m_scrollArea->verticalScrollBar()->maximum();
+        int y = cy + dy;
 
-    if(dy < 0 && y <  0)  { dy = cy;    y = 0; }
-    if(dy > 0 && y >= my) { dy = my-cy; y = my; }
+        if(dy < 0 && y <  0)  { dy = cy;    y = 0; }
+        if(dy > 0 && y >= my) { dy = my-cy; y = my; }
 
-    m_scrollArea->viewport()->scroll(0, dy); 
-    m_scrollArea->verticalScrollBar()->setValue(y);
+        m_scrollArea->viewport()->scroll(0, dy);
+        m_scrollArea->verticalScrollBar()->setValue(y);
 
-    e->accept();
-  }
-  else if( e->modifiers() == Qt::AltModifier) { //a1e ShiftModifier -> AltModifier because same beh. as Web
-    // x
-    int dx = e->delta() < 0 ? SCROLL_STEP : -SCROLL_STEP;
-    const int cx = m_scrollArea->horizontalScrollBar()->value();
-    const int mx = m_scrollArea->horizontalScrollBar()->maximum();
-    int x = cx + dx; 
+        e->accept();
+    }
+    else if( e->modifiers() == Qt::AltModifier) { //a1e ShiftModifier -> AltModifier because same beh. as Web
+        // x
+        int dx = e->delta() < 0 ? SCROLL_STEP : -SCROLL_STEP;
+        const int cx = m_scrollArea->horizontalScrollBar()->value();
+        const int mx = m_scrollArea->horizontalScrollBar()->maximum();
+        int x = cx + dx;
 
-    if(dx < 0 && x <  0)  { dx = cx;    x = 0; }
-    if(dx > 0 && x >= mx) { dx = mx-cx; x = mx; }
+        if(dx < 0 && x <  0)  { dx = cx;    x = 0; }
+        if(dx > 0 && x >= mx) { dx = mx-cx; x = mx; }
 
-    m_scrollArea->viewport()->scroll(dx, 0); 
-    m_scrollArea->horizontalScrollBar()->setValue(x);
+        m_scrollArea->viewport()->scroll(dx, 0);
+        m_scrollArea->horizontalScrollBar()->setValue(x);
 
-    e->accept();
-  }
+        e->accept();
+    }
 }
 
 void PreviewWidgetSvg::paintEvent(QPaintEvent *)
@@ -223,7 +223,7 @@ void PreviewWidgetSvg::paintEvent(QPaintEvent *)
         }
         QRect output_rect(QPoint(), output_size);
         output_rect.translate(rect().center() - output_rect.center());
-        m_svgRenderer->render(&painter, output_rect);        
+        m_svgRenderer->render(&painter, output_rect);
     }
     if (output_size.width() == -1 || output_size.height() == -1) {
         qDebug() << "switch preview mode!?";
@@ -248,5 +248,5 @@ void PreviewWidgetSvg::zoomImage()
 // a1e
 void PreviewWidgetSvg::setScrollArea (QScrollArea *scrollArea)
 {
-  m_scrollArea = scrollArea;
+    m_scrollArea = scrollArea;
 }

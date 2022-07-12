@@ -7,19 +7,13 @@
 #include <QPalette>
 
 PreviewWidget::PreviewWidget(QWidget *parent)
-    : QWidget(parent)
-    , m_mode(NoMode)
-    , m_zoomAutoFit(false)
-    , m_zoomAutoFitMode(FitOff)
-    , m_zoomScale(ZOOM_ORIGINAL_SCALE)
-{
-}
+    : QWidget (parent)
+{}
 
-void PreviewWidget::zoomOriginal()
+void PreviewWidget::zoomOriginal ()
 {
-    setZoomAutoFitMode(FitOff);
-
-    setZoomScale(ZOOM_ORIGINAL_SCALE);
+    setZoomAutoFitMode (FitOff);
+    setZoomScale (ZOOM_ORIGINAL_SCALE);
 }
 
 void PreviewWidget::zoomIn()
@@ -46,20 +40,25 @@ void PreviewWidget::setZoomAutoFitMode(AutoFitMode mode)
 {
     m_zoomAutoFitMode = mode;
 
-    if(m_zoomAutoFitMode == FitOff) {
+    if (m_zoomAutoFitMode == FitOff)
         m_zoomAutoFit = false;
-    }
 }
 
-PreviewWidget::AutoFitMode PreviewWidget::getZoomAutoFitMode()
+PreviewWidget::AutoFitMode PreviewWidget::getZoomAutoFitMode () const
 {
-    if(m_zoomAutoFit) {
+    if (m_zoomAutoFit)
         return m_zoomAutoFitMode;
-    }
-    else {
+    else
         return FitOff;
-    }
 }
+
+//void PreviewWidget::getScrollAreaPos () const
+//{
+//    if (!m_scrollArea)
+//        return;
+//    qDebug () << "vertical slider position:" << m_scrollArea->verticalScrollBar ()->sliderPosition ();
+//    qDebug () << "horizontal slider position:" << m_scrollArea->horizontalScrollBar ()->sliderPosition ();
+//}
 
 void PreviewWidget::zoomAutoFit(bool state)
 {

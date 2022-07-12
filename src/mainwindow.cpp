@@ -22,22 +22,22 @@
 #include <QDesktopServices>
 
 namespace {
-    const char* TEXT_REFRESHING = "Refreshing...";
+const char* TEXT_REFRESHING = "Refreshing...";
 
-    const int ASSISTANT_ITEM_DATA_ROLE = Qt::UserRole;
-    const int ASSISTANT_ITEM_NOTES_ROLE = Qt::UserRole + 1;
-    const int ASSISTANT_ITEM_FORMAT_ROLE = Qt::UserRole + 2;
+const int ASSISTANT_ITEM_DATA_ROLE = Qt::UserRole;
+const int ASSISTANT_ITEM_NOTES_ROLE = Qt::UserRole + 1;
+const int ASSISTANT_ITEM_FORMAT_ROLE = Qt::UserRole + 2;
 
-    const int MAX_RECENT_DOCUMENT_SIZE = 10;
-    const int STATUSBAR_TIMEOUT = 3000; // in miliseconds
-    const QString TITLE_FORMAT_STRING = "%1[*] - %2";
-    const QString EXPORT_TO_MENU_FORMAT_STRING = QObject::tr("Export to %1");
-    const QString EXPORT_TO_LABEL_FORMAT_STRING = QObject::tr("Export to: %1");
-    const QString AUTOREFRESH_STATUS_LABEL = QObject::tr("Auto-refresh");
-    const QString CACHE_SIZE_FORMAT_STRING = QObject::tr("Cache: %1");
-    const QSize ASSISTANT_ICON_SIZE(128, 128);
-    const QRegExp IMAGE_PNG_ONLY("ditaa|jcckit");
-    const QRegExp IMAGE_SVG_ONLY("graph\\s+\\w+\\s*[{]");
+const int MAX_RECENT_DOCUMENT_SIZE = 10;
+const int STATUSBAR_TIMEOUT = 3000; // in miliseconds
+const QString TITLE_FORMAT_STRING = "%1[*] - %2";
+const QString EXPORT_TO_MENU_FORMAT_STRING = QObject::tr("Export to %1");
+const QString EXPORT_TO_LABEL_FORMAT_STRING = QObject::tr("Export to: %1");
+const QString AUTOREFRESH_STATUS_LABEL = QObject::tr("Auto-refresh");
+const QString CACHE_SIZE_FORMAT_STRING = QObject::tr("Cache: %1");
+const QSize ASSISTANT_ICON_SIZE(128, 128);
+const QRegExp IMAGE_PNG_ONLY("ditaa|jcckit");
+const QRegExp IMAGE_SVG_ONLY("graph\\s+\\w+\\s*[{]");
 } // namespace {}
 
 MainWindow::MainWindow(bool oldPreview, QWidget* parent)
@@ -46,14 +46,11 @@ MainWindow::MainWindow(bool oldPreview, QWidget* parent)
     , m_hasValidPaths(false)
     , m_process(0)
     , m_currentImageFormat(SvgFormat)
-    , m_needsRefresh(false) {
+    , m_needsRefresh(false)
+{
+    setWindowTitle (TITLE_FORMAT_STRING.arg ("", qApp->applicationName ()));
 
-    setWindowTitle(TITLE_FORMAT_STRING
-                   .arg("")
-                   .arg(qApp->applicationName())
-                  );
-
-    m_cache = new FileCache(0, this);
+    m_cache = new FileCache (0, this);
 
     m_recentDocuments = new RecentDocuments(MAX_RECENT_DOCUMENT_SIZE, this);
     connect(m_recentDocuments, SIGNAL(recentDocument(QString)), this, SLOT(onRecentDocumentsActionTriggered(QString)));
@@ -67,22 +64,20 @@ MainWindow::MainWindow(bool oldPreview, QWidget* parent)
     if(m_oldPreview) {
         // original preview widget
 
-        m_previewWidget = new PreviewWidgetSvg(this);
+        m_previewWidget = new PreviewWidgetSvg (this);
 
         m_previewWidgetScrollArea = new QScrollArea;
-        m_previewWidgetScrollArea->setWidget(m_previewWidget);
-        m_previewWidgetScrollArea->setAlignment(Qt::AlignCenter);
-        m_previewWidgetScrollArea->setWidgetResizable(true);
-        setCentralWidget(m_previewWidgetScrollArea);
+        m_previewWidgetScrollArea->setWidget (m_previewWidget);
+        m_previewWidgetScrollArea->setAlignment (Qt::AlignCenter);
+        m_previewWidgetScrollArea->setWidgetResizable (true);
+        setCentralWidget (m_previewWidgetScrollArea);
 
-        m_previewWidget->setScrollArea(m_previewWidgetScrollArea);
+        m_previewWidget->setScrollArea (m_previewWidgetScrollArea);
     }
     else {
         // with QWebView as preview widget
-
-        m_previewWidget = new PreviewWidgetWeb(this);
-
-        setCentralWidget(m_previewWidget);
+        m_previewWidget = new PreviewWidgetWeb (this);
+        setCentralWidget (m_previewWidget);
     }
 
     createDockWindows();
@@ -135,21 +130,21 @@ QIcon MainWindow::iconFromFile(QSize size, /*const*/ QString path, const QString
             // create assistant icon from assistant data
 
             QString src = prepareCode(code);
-            QTextStream(stdout) << "render missing assistant icon " << path << endl;
+            QTextStream(stdout) << "render missing assistant icon " << path << Qt::endl;
 
             if(m_generatingPopup == NULL) {
                 // first call
                 m_generatingPopup = new QMessageBox(QMessageBox::Information,
-                                                  qApp->applicationName(),
-                                                  tr("Generating missing assistant icons.")
-                                                  + "\n"
-                                                  + tr("This takes a while..."));
+                                                    qApp->applicationName(),
+                                                    tr("Generating missing assistant icons.")
+                                                    + "\n"
+                                                    + tr("This takes a while..."));
                 QTimer::singleShot(5000, m_generatingPopup, SLOT(hide()));
-//                generatingPopup->show();  // shows no text :(
+                //                generatingPopup->show();  // shows no text :(
                 m_generatingPopup->exec();
-//            } else {
-//                if(generatingPopup->isVisible())
-//                    generatingPopup->setText(tr("Generating missing assistant icons.") + path);
+                //            } else {
+                //                if(generatingPopup->isVisible())
+                //                    generatingPopup->setText(tr("Generating missing assistant icons.") + path);
             }
 
             if(asPng) {
@@ -163,9 +158,9 @@ QIcon MainWindow::iconFromFile(QSize size, /*const*/ QString path, const QString
             // PNG
             QImage image(path);
 
-//            image = image.scaled(size,Qt::KeepAspectRatio);
+            //            image = image.scaled(size,Qt::KeepAspectRatio);
             if(image.width() > image.height()) {
-            image = image.scaledToWidth(size.width());
+                image = image.scaledToWidth(size.width());
             }
             else {
                 image = image.scaledToHeight(size.height());
@@ -283,18 +278,18 @@ void MainWindow::about() {
                       "PlantUML_Language_Reference_Guide.pdf</a> for more information."
                       "<br><br>"
                       "%1 build is <b>" __DATE__ ", " __TIME__ "</b><br>"
-                      "PlantUML version is <b>%2</b><br>"
-                      "Java version is <b>%3</b><br>"
-                      "Graphviz version is <b>%4</b>"
-                      "<br><br>"
-                      "Copyright (C) 2012-2016 Ionutz Borcoman, Jens Albers and others. "
-                      "See AUTHORS for more information. "
-                      "Released under <a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL version 3</a>." )
+                                                               "PlantUML version is <b>%2</b><br>"
+                                                               "Java version is <b>%3</b><br>"
+                                                               "Graphviz version is <b>%4</b>"
+                                                               "<br><br>"
+                                                               "Copyright (C) 2012-2016 Ionutz Borcoman, Jens Albers and others. "
+                                                               "See AUTHORS for more information. "
+                                                               "Released under <a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL version 3</a>." )
                    .arg(qApp->applicationName()) // %1
                    .arg(m_plantUmlVersion)       // %2
                    .arg(m_javaVersion)           // %3
                    .arg(m_graphvizVersion)       // %4
-                  );
+                   );
     msgBox.exec();
 }
 
@@ -333,9 +328,9 @@ void MainWindow::onPlantUmlQA() {
 
 QString MainWindow::makeKeyForDocument(QByteArray current_document) {
     QString key = QString("%1.%2")
-                  .arg(QString::fromUtf8(QCryptographicHash::hash(current_document, QCryptographicHash::Md5).toHex()))
-                  .arg(m_imageFormatNames[m_currentImageFormat])
-                  ;
+            .arg(QString::fromUtf8(QCryptographicHash::hash(current_document, QCryptographicHash::Md5).toHex()))
+            .arg(m_imageFormatNames[m_currentImageFormat])
+            ;
 
     return key;
 }
@@ -352,13 +347,13 @@ bool MainWindow::refreshFromCache() {
         QByteArray current_document = m_editor->toPlainText().toUtf8().trimmed();
 
         switch (m_currentImageFormat) {
-            case SvgFormat:
-                m_previewWidget->setMode(PreviewWidget::SvgMode);
-                break;
+        case SvgFormat:
+            m_previewWidget->setMode(PreviewWidget::SvgMode);
+            break;
 
-            case PngFormat:
-                m_previewWidget->setMode(PreviewWidget::PngMode);
-                break;
+        case PngFormat:
+            m_previewWidget->setMode(PreviewWidget::PngMode);
+            break;
         }
 
         QString key = makeKeyForDocument(current_document);
@@ -374,7 +369,7 @@ bool MainWindow::refreshFromCache() {
                 if (cache_image.size()) {
                     m_cachedImage = cache_image;
                     m_previewWidget->load(m_cachedImage);
-//                    statusBar()->showMessage(tr("Cache hit: %1").arg(key), STATUSBAR_TIMEOUT);
+                    //                    statusBar()->showMessage(tr("Cache hit: %1").arg(key), STATUSBAR_TIMEOUT);
                     qDebug() << "cache hit:" << key;
                     m_needsRefresh = false;
                     return true;
@@ -421,55 +416,53 @@ bool MainWindow::switchPreviewModeIfNeeded() {
     return false;
 }
 
-void MainWindow::refresh(bool forced) {
+void MainWindow::refresh (bool forced)
+{
     if (m_process) {
         qDebug() << "still processing previous refresh. skipping...";
         return;
     }
 
-    if (!m_needsRefresh && !forced) {
+    if (!m_needsRefresh && !forced)
         return;
-    }
 
     if (!m_hasValidPaths) {
-        qDebug() << "please configure paths for plantuml and java. aborting...";
-        statusBar()->showMessage(tr("PlantUML or Java not found. Please set them correctly in the \"Preferences\" dialog!"));
+        qDebug () << "please configure paths for plantuml and java. aborting...";
+        statusBar ()->showMessage (tr ("PlantUML or Java not found. Please set them correctly in the \"Preferences\" dialog!"));
         return;
     }
 
-    if (!forced && refreshFromCache()) {
+    if (!forced && refreshFromCache())
+        return;
+
+    if (m_editor->isEmpty ()) {
+        qDebug () << "empty document. skipping...";
         return;
     }
 
-    if (m_editor->isEmpty()) {
-        qDebug() << "empty document. skipping...";
-        return;
-    }
-
-    QString src = prepareCodeFinal(m_editor->toPlainText().toUtf8().trimmed());
-    QByteArray current_document(src.toUtf8().trimmed());
+    QString src = prepareCodeFinal (m_editor->toPlainText().toUtf8().trimmed());
+    QByteArray current_document (src.toUtf8().trimmed());
 
     m_needsRefresh = false;
 
     m_refreshing = true;
-    switchPreviewModeIfNeeded();
+    switchPreviewModeIfNeeded ();
     m_refreshing = false;
 
     switch (m_currentImageFormat) {
-        case SvgFormat:
-            m_previewWidget->setMode(PreviewWidgetSvg::SvgMode);
-            break;
+    case SvgFormat:
+        m_previewWidget->setMode (PreviewWidgetSvg::SvgMode);
+        break;
 
-        case PngFormat:
-            m_previewWidget->setMode(PreviewWidgetSvg::PngMode);
-            break;
+    case PngFormat:
+        m_previewWidget->setMode (PreviewWidgetSvg::PngMode);
+        break;
     }
 
     QString key = makeKeyForDocument(current_document);
 
-    if(statusBar()->currentMessage().isEmpty()) {
-        statusBar()->showMessage(tr(TEXT_REFRESHING));
-    }
+    if (statusBar ()->currentMessage ().isEmpty ())
+        statusBar()->showMessage (tr (TEXT_REFRESHING));
 
     QStringList arguments;
 
@@ -480,9 +473,8 @@ void MainWindow::refresh(bool forced) {
               << "-fastfail2"
               << "-nbthread" << "auto";
 
-    if (m_useCustomGraphviz) {
+    if (m_useCustomGraphviz)
         arguments << "-graphvizdot" << m_graphvizPath.absoluteFilePath();
-    }
 
     arguments << "-charset" << "UTF-8"
               << "-pipe";
@@ -497,35 +489,35 @@ void MainWindow::refresh(bool forced) {
     } else if(!m_lastDir.isEmpty()) {
         fi = new QFileInfo(m_lastDir);
         m_process->setWorkingDirectory(fi->absolutePath());
-    } else if(!m_assistantXmlPath.isEmpty()) {
+    } else if (!m_assistantXmlPath.isEmpty()) {
         fi = new QFileInfo(m_assistantXmlPath);
         m_process->setWorkingDirectory(fi->absolutePath());
     }
 
-    if(fi) {
+    if (fi) {
         arguments << "-D_DIRNAME_=" + fi->absolutePath();
         arguments << "-D_FILENAME_=" + fi->fileName();
         arguments << "-D_BASENAME_=" + fi->baseName();
         arguments << "-D_FILEEXT_=" + fi->completeSuffix();
     }
 
-    m_process->start(m_javaPath.absoluteFilePath(), arguments);
+    m_process->start (m_javaPath.absoluteFilePath (), arguments);
 
-    if (!m_process->waitForStarted()) {
+    if (!m_process->waitForStarted ()) {
         qDebug() << "refresh subprocess failed to start";
         return;
     }
 
-    connect(m_process, SIGNAL(finished(int)), this, SLOT(refreshFinished()));
+    connect (m_process, SIGNAL(finished(int)), this, SLOT(refreshFinished()));
 
-    m_process->write(current_document); // pipe
-    m_process->closeWriteChannel();
+    m_process->write (current_document); // pipe
+    m_process->closeWriteChannel ();
 }
 
 void MainWindow::updateCacheSizeInfo() {
     m_cacheSizeLabel->setText(m_useCache ?
-                              CACHE_SIZE_FORMAT_STRING.arg(cacheSizeToString(m_cache->totalCost())) :
-                              tr("NO CACHE"));
+                                  CACHE_SIZE_FORMAT_STRING.arg(cacheSizeToString(m_cache->totalCost())) :
+                                  tr("NO CACHE"));
 }
 
 void MainWindow::focusAssistant() {
@@ -540,43 +532,43 @@ void MainWindow::focusAssistant() {
     }
 }
 
-void MainWindow::refreshFinished() {
-    m_cachedImage = m_process->readAll();
-    m_previewWidget->load(m_cachedImage);
-    m_process->deleteLater();
+void MainWindow::refreshFinished ()
+{
+    m_cachedImage = m_process->readAll ();
+    m_previewWidget->load (m_cachedImage);
+    m_process->deleteLater ();
     m_process = 0;
 
     if (m_useCache && m_cache) {
         m_cache->addItem(m_cachedImage, m_lastKey,
                          [](const QString & path,
-                            const QString & key,
-                            int cost,
-                            const QDateTime & date_time,
-                            QObject * parent
-        ) {
+                         const QString & key,
+                         int cost,
+                         const QDateTime & date_time,
+                         QObject * parent
+                         ) {
             return new FileCacheItem(path, key, cost, date_time, parent);
         });
         updateCacheSizeInfo();
     }
 
-    switch(m_previewWidget->getZoomAutoFitMode()) {
+    switch (m_previewWidget->getZoomAutoFitMode ()) {
     case PreviewWidget::FitBest:
-        emit m_zoomFitBestAction->trigger();
+        /*emit */m_zoomFitBestAction->trigger ();
         break;
     case PreviewWidget::FitWidth:
-        emit m_zoomFitWidthAction->trigger();
+        /*emit */m_zoomFitWidthAction->trigger ();
         break;
     case PreviewWidget::FitHeight:
-        emit m_zoomFitHeightAction->trigger();
+        /*emit */m_zoomFitHeightAction->trigger ();
         break;
     case PreviewWidget::FitOff:
         // NOP
         break;
     }
 
-    if(statusBar()->currentMessage().isEmpty() || statusBar()->currentMessage() == tr(TEXT_REFRESHING)) {
-        statusBar()->showMessage(tr("Refreshed"), STATUSBAR_TIMEOUT);
-    }
+    if (statusBar ()->currentMessage ().isEmpty () || statusBar ()->currentMessage () == tr (TEXT_REFRESHING))
+        statusBar ()->showMessage (tr ("Refreshed"), STATUSBAR_TIMEOUT);
 }
 
 void MainWindow::changeImageFormat() {
@@ -630,7 +622,7 @@ void MainWindow::onEditorChanged() {
 
 void MainWindow::onRefreshActionTriggered() {
     m_needsRefresh = true;
-    refresh(true);
+    refresh (true);
 }
 
 void MainWindow::onPreferencesActionTriggered() {
@@ -657,12 +649,11 @@ void MainWindow::onReloadDocumentActionTriggered() {
     }
 }
 
-void MainWindow::onSaveActionTriggered() {
-    saveDocument(m_documentPath);
+void MainWindow::onSaveActionTriggered () {
+    saveDocument (m_documentPath);
 
-    if (m_refreshOnSave) {
-        onRefreshActionTriggered();
-    }
+    if (m_refreshOnSave)
+        onRefreshActionTriggered ();
 }
 
 void MainWindow::onSaveAsActionTriggered() {
@@ -940,10 +931,10 @@ void MainWindow::readSettings(bool reload) {
         m_cache->setMaxCost(m_cacheMaxSize);
         m_cache->setPath(m_cachePath.absolutePath(),
                          [](const QString & path,
-                            const QString & key,
-                            int cost,
-                            const QDateTime & date_time,
-                            QObject * parent
+                         const QString & key,
+                         int cost,
+                         const QDateTime & date_time,
+                         QObject * parent
                          ) {
             return new FileCacheItem(path, key, cost, date_time, parent);
         });
@@ -1055,7 +1046,7 @@ void MainWindow::writeSettings() {
         settings.setValue(SETTINGS_USE_CACHE, m_useCache);
         settings.setValue(SETTINGS_USE_CUSTOM_CACHE, m_useCustomCache);
         settings.setValue(SETTINGS_CUSTOM_CACHE_PATH, m_customCachePath);
-        settings.setValue(SETTINGS_CACHE_MAX_SIZE, m_cacheMaxSize);        
+        settings.setValue(SETTINGS_CACHE_MAX_SIZE, m_cacheMaxSize);
         // refresh
         settings.setValue(SETTINGS_AUTOREFRESH_TIMEOUT, m_autoRefreshTimer->interval());
         settings.setValue(SETTINGS_PREVIEW_REFRESH_ON_SAVE, m_refreshOnSave);
@@ -1103,10 +1094,10 @@ void MainWindow::openDocument(const QString& name) {
 
     if (tmp_name.isEmpty() || QFileInfo(tmp_name).exists() == false) {
         tmp_name = QFileDialog::getOpenFileName(this,
-                   tr("Select a file to open"),
-                   m_lastDir,
-                   "PlantUML (*.plantuml *.puml);; All Files (*.*)"
-                                               );
+                                                tr("Select a file to open"),
+                                                m_lastDir,
+                                                "PlantUML (*.plantuml *.puml);; All Files (*.*)"
+                                                );
 
         if (tmp_name.isEmpty()) {
             return;
@@ -1125,24 +1116,23 @@ void MainWindow::openDocument(const QString& name) {
     m_editor->setPlainText(QString::fromUtf8(file.readAll())); // resets undo buffer => ok
     setWindowModified(false);
     m_documentPath = tmp_name;
-    setWindowTitle(TITLE_FORMAT_STRING
-                   .arg(QFileInfo(tmp_name).fileName())
-                   .arg(qApp->applicationName())
-                  );
+    setWindowTitle (TITLE_FORMAT_STRING
+                   .arg (QFileInfo(tmp_name).fileName (), qApp->applicationName ()));
     m_needsRefresh = true;
     refresh();
     m_recentDocuments->accessing(tmp_name);
 }
 
-bool MainWindow::saveDocument(const QString& name) {
+bool MainWindow::saveDocument (const QString& name)
+{
     QString file_path = name;
 
     if (file_path.isEmpty()) {
         file_path = QFileDialog::getSaveFileName(this,
-                    tr("Select where to store the document"),
-                    m_lastDir,
-                    "PlantUML (*.plantuml *.puml);; All Files (*.*)"
-                                                );
+                                                 tr("Select where to store the document"),
+                                                 m_lastDir,
+                                                 "PlantUML (*.plantuml *.puml);; All Files (*.*)"
+                                                 );
 
         if (file_path.isEmpty()) {
             return false;
@@ -1165,17 +1155,17 @@ bool MainWindow::saveDocument(const QString& name) {
     setWindowTitle(TITLE_FORMAT_STRING
                    .arg(QFileInfo(file_path).fileName())
                    .arg(qApp->applicationName())
-                  );
+                   );
     statusBar()->showMessage(tr("Document save in %1").arg(file_path), STATUSBAR_TIMEOUT);
     m_recentDocuments->accessing(file_path);
 
     if (m_autoSaveImageAction->isChecked()) {
         QFileInfo info(file_path);
         QString image_path = QString("%1/%2.%3")
-                             .arg(info.absolutePath())
-                             .arg(info.baseName())
-                             .arg(m_imageFormatNames[m_currentImageFormat])
-                             ;
+                .arg(info.absolutePath())
+                .arg(info.baseName())
+                .arg(m_imageFormatNames[m_currentImageFormat])
+                ;
         qDebug() << "saving image in:   " << image_path;
         QFile image(image_path);
 
@@ -1291,7 +1281,7 @@ void MainWindow::exportImage(const QString& filename) {
             error = tr("Unknown file extension %1").arg(fileExtension);
         }
     }
-    else { 
+    else {
         error = tr("No file extension %1").arg(tmpFilename);
     }
 
@@ -1349,7 +1339,7 @@ bool MainWindow::generateImage(const QString& filename, const QString& format, c
         return false;
     }
 
-//    QString key = makeKeyForDocument(src);
+    //    QString key = makeKeyForDocument(src);
 
     qDebug() << "generate" << format << "file" << filename << "...";
 
@@ -1513,9 +1503,9 @@ void MainWindow::createActions() {
         m_referenceGuideAction->setStatusTip(tr("Show PlantUML Reference Guide (PDF Viewer or Browser)"));
         connect(m_referenceGuideAction, SIGNAL(triggered()), this, SLOT(onReferenceGuide()));
 
-        m_plantUmlHome = new QAction(getIcon("text-html"), tr("&PlantUml Homepage"), this);
-        m_plantUmlHome->setStatusTip(tr("Show PlantUML Homepage"));
-        connect(m_plantUmlHome, SIGNAL(triggered()), this, SLOT(onPlantUmlPage()));
+        //m_plantUmlHome = new QAction(getIcon("text-html"), tr("&PlantUml Homepage"), this);
+        //m_plantUmlHome->setStatusTip(tr("Show PlantUML Homepage"));
+        //connect(m_plantUmlHome, SIGNAL(triggered()), this, SLOT(onPlantUmlPage()));
 
         m_plantUmlNews = new QAction(getIcon("text-html"), tr("&PlantUml News"), this);
         m_plantUmlNews->setStatusTip(tr("Show PlantUML News"));
@@ -1665,12 +1655,12 @@ void MainWindow::createMenus() {
         QMenu* plantUmlPages = m_helpMenu->addMenu(getIcon("text-html"), "PlantUML");
         plantUmlPages->addAction(m_referenceGuideAction);
         plantUmlPages->addSeparator();
-        plantUmlPages->addAction(m_plantUmlHome);
+        //plantUmlPages->addAction(m_plantUmlHome);
         plantUmlPages->addAction(m_plantUmlNews);
         plantUmlPages->addAction(m_plantUmlChanges);
         plantUmlPages->addAction(m_plantUmlQA);
 
-        m_helpMenu->addAction(m_aboutQtAction);        
+        m_helpMenu->addAction(m_aboutQtAction);
     }
 }
 
@@ -1756,15 +1746,15 @@ void MainWindow::createDockWindows() {
     QFont dockFont = this->font(); // more space for assistant items
     dockFont.setPointSize(dockFont.pointSize() - 1);
 
-    { // Editor dock
+    // Editor dock
+    {
+        dock = new QDockWidget (tr ("Text Editor"), this);
+        dock->setFont (dockFont);
+        m_editor = new TextEdit (dock);
 
-        dock = new QDockWidget(tr("Text Editor"), this);
-        dock->setFont(dockFont);
-        m_editor = new TextEdit(dock);
+        new HighLighter (m_editor->document ());
 
-        new HighLighter(m_editor->document());
-
-        connect(m_editor->document(), SIGNAL(contentsChanged()), this, SLOT(onEditorChanged()));
+        connect (m_editor->document (), SIGNAL(contentsChanged()), this, SLOT(onEditorChanged()));
         dock->setWidget(m_editor);
         dock->setObjectName("text_editor");
         addDockWidget(Qt::RightDockWidgetArea, dock);
@@ -1776,7 +1766,8 @@ void MainWindow::createDockWindows() {
         m_showEditorDockAction->setShortcut(QKeySequence(Qt::SHIFT + Qt::ALT + Qt::Key_E));
     }
 
-    { // Assistant dock
+    // Assistant dock
+    {
         m_assistantDock = dock = new QDockWidget(tr("Assistant"), this);
         m_assistantDock->setFont(dockFont);
         m_assistantToolBox = new QToolBox(dock);
@@ -1842,7 +1833,7 @@ void MainWindow::addZoomActions(QWidget* widget) {
 
 void MainWindow::checkPaths() {
     m_hasValidPaths =  QFileInfo(m_javaPath).exists()
-                    && QFileInfo(m_plantUmlPath).exists();
+            && QFileInfo(m_plantUmlPath).exists();
 }
 
 void MainWindow::reloadAssistantXml(const QString& path) {
@@ -1876,7 +1867,7 @@ void MainWindow::reloadAssistantXml(const QString& path) {
             for (int j = 0; j < assistant->size(); ++j) {
                 const AssistantItem* assistantItem = assistant->item(j);
 
-//                qDebug() << "ICON" << assistantItem->icon();
+                //                qDebug() << "ICON" << assistantItem->icon();
 
                 QListWidgetItem* listWidgetItem =
                         new QListWidgetItem(iconFromFile(ASSISTANT_ICON_SIZE,
@@ -1957,22 +1948,22 @@ void MainWindow::insertAssistantCode(const QString& code) {
     cursor.beginEditBlock();
     cursor.insertText(src);
     switch(mode) {
-        case 1:
-            cursor.setPosition(start);
-            statusBar()->showMessage(tr("Selection replaced with assistant item"), STATUSBAR_TIMEOUT);
-            break;
-        case 2:
-            cursor.setPosition(start);
-            statusBar()->showMessage(tr("Cursor at start code replaced with assistant item"), STATUSBAR_TIMEOUT);
-            break;
-        case 3:
-            cursor.setPosition(code.length());
-            statusBar()->showMessage(tr("Cursor at end - code replaced with assistant item"), STATUSBAR_TIMEOUT);
-            break;
-        case 4:
-            cursor.setPosition(start);
-            statusBar()->showMessage(tr("Inserted assistant item"), STATUSBAR_TIMEOUT);
-            break;
+    case 1:
+        cursor.setPosition(start);
+        statusBar()->showMessage(tr("Selection replaced with assistant item"), STATUSBAR_TIMEOUT);
+        break;
+    case 2:
+        cursor.setPosition(start);
+        statusBar()->showMessage(tr("Cursor at start code replaced with assistant item"), STATUSBAR_TIMEOUT);
+        break;
+    case 3:
+        cursor.setPosition(code.length());
+        statusBar()->showMessage(tr("Cursor at end - code replaced with assistant item"), STATUSBAR_TIMEOUT);
+        break;
+    case 4:
+        cursor.setPosition(start);
+        statusBar()->showMessage(tr("Inserted assistant item"), STATUSBAR_TIMEOUT);
+        break;
     }
     cursor.endEditBlock();
 }
@@ -2020,9 +2011,9 @@ QString MainWindow::prepareCode(const QString& codeBefore, const bool addTags)
     if(regex != NULL) {
         if(regex->indexIn(codeBefore) > -1) {
             options = regex->cap(1).trimmed();
-           if(!options.isEmpty()) {
-               options = " " + options;
-           }
+            if(!options.isEmpty()) {
+                options = " " + options;
+            }
         }
         code.remove(*regex); // remove salt/ditaa/jcckit/... + options
     }

@@ -9,12 +9,12 @@ TEMPLATE = app
 
 QT += core gui svg widgets
 
-lessThan(QT_VERSION, 5.6) {
-    QT += webkitwidgets
-    DEFINES += USE_WEBKIT
-} else {
+#lessThan(QT_VERSION, 5.6) {
+#    QT += webkitwidgets
+#    DEFINES += USE_WEBKIT
+#} else {
     QT += webenginewidgets
-}
+#}
 
 win32:RC_ICONS += resources/icon.ico
 macx:ICON = resources/icon.icns
@@ -26,7 +26,7 @@ CONFIG += debug_and_release
 
 CONFIG += static
 
-QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
+QMAKE_CXXFLAGS += -std=c++17 -Wall -Wextra -pedantic
 
 CONFIG(debug, debug|release){
     DESTDIR     = ./debug

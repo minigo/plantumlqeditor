@@ -2,7 +2,7 @@
 #define PREVIEWWIDGETWEB_H
 
 #include <src/previewwidget.h>
-#include <src/webview.h>
+//#include <src/webview.h>
 
 #include <QObject>
 #include <QWidget>
@@ -15,10 +15,10 @@ class PreviewWidgetWeb : public PreviewWidget
     Q_OBJECT
 
 public:
-    explicit PreviewWidgetWeb(QWidget *parent = 0);
+    explicit PreviewWidgetWeb (QWidget *parent = nullptr);
 
-    void load(const QByteArray &data);
-    void setScrollArea(QScrollArea *scrollArea);
+    void load (const QByteArray &data);
+    void setScrollArea (QScrollArea *scrollArea);
 
 public slots:
     void zoomFitBest();
@@ -43,8 +43,11 @@ private:
     int m_width;
     int m_height;
 
-private slots:
+//private slots:
 //    void loadFinished(bool);
+
+protected:
+    QPointF _scrollPos;
 };
 
 #endif // PREVIEWWIDGETWEB_H

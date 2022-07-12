@@ -73,7 +73,8 @@ void PreferencesDialog::readSettings()
         QFont defaultFont= QFontDatabase::systemFont(QFontDatabase::FixedFont);
         defaultFont.setPointSize(defaultFont.pointSize()-2);
         assistantInfoFont.fromString(settings.value(SETTINGS_ASSISTANT_FONT, defaultFont.toString()).toString());
-        m_ui->assistantInfoFontComboBox->setCurrentFont(assistantInfoFont);
+
+        m_ui->assistantInfoFontComboBox->setCurrentFont (assistantInfoFont);
         m_ui->assistantInfoFontSizeSpinBox->setValue(assistantInfoFont.pointSize());
     }
     settings.endGroup();

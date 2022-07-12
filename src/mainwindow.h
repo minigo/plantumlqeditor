@@ -216,7 +216,7 @@ private:
     QMenu* m_helpMenu;
     QAction* m_aboutAction;
     QAction* m_referenceGuideAction;
-    QAction* m_plantUmlHome;
+    //QAction* m_plantUmlHome;
     QAction* m_plantUmlNews;
     QAction* m_plantUmlChanges;
     QAction* m_plantUmlQA;

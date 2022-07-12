@@ -29,10 +29,10 @@ public:
     QString toPlainText();
 
 protected:
-    void keyPressEvent(QKeyEvent *e);
-    void paintEvent(QPaintEvent *e);
-    void resizeEvent(QResizeEvent *e);
-    void wheelEvent(QWheelEvent *e); 
+    void keyPressEvent (QKeyEvent *e);
+    void paintEvent (QPaintEvent *e);
+    void resizeEvent (QResizeEvent *e);
+    void wheelEvent (QWheelEvent *e);
 
 private slots:
     void updateLineNumberAreaWidth(int newBlockCount);

@@ -1,45 +1,46 @@
 ﻿#include "src/previewwidgetweb.h"
-
 #include "src/webview.h"
+
+#include <QWebEngineScript>
 
 #include <QDebug>
 #include <QImage>
 #include <QRegExp>
 #include <QVBoxLayout>
 
-static const QString HTML_BEGIN = "<!DOCTYPE html>"
-                                  "<html>"
-                                  "<head>"
-                                  "  <meta charset=\"utf-8\">"
-                                  "  <title>PlantUML QEditor Preview Widget</title>"
-                                  "  <style>"
-                                  "    html, body, table, td {"
-                                  "      height:  100%;"
-                                  "      width:   100%;"
-                                  "      margin:  0px;"
-                                  "      padding: 0px;"
-                                  "      border:  0px;"
-                                  "    }"
-                                  "    table {"
-                                  "      border-collapse: collapse;"
-                                  "    }"
-                                  "    td {"
-                                  "      vertical-align: middle;"
-                                  "      text-align:     center;"
-//                                  "      border:         1px dashed red;"
-                                  "    }"
-                                  "  </style>"
-                                  "</head>"
-                                  "<body>"
-                                  "  <table>"
-                                  "    <tr>"
-                                  "      <td>";
+static const char HTML_BEGIN[] = "<!DOCTYPE html>"
+                                 "<html>"
+                                 "<head>"
+                                 "  <meta charset=\"utf-8\">"
+                                 "  <title>PlantUML QEditor Preview Widget</title>"
+                                 "  <style>"
+                                 "    html, body, table, td {"
+                                 "      height:  100%;"
+                                 "      width:   100%;"
+                                 "      margin:  0px;"
+                                 "      padding: 0px;"
+                                 "      border:  0px;"
+                                 "    }"
+                                 "    table {"
+                                 "      border-collapse: collapse;"
+                                 "    }"
+                                 "    td {"
+                                 "      vertical-align: middle;"
+                                 "      text-align:     center;"
+        //                                  "      border:         1px dashed red;"
+        "    }"
+        "  </style>"
+        "</head>"
+        "<body>"
+        "  <table>"
+        "    <tr>"
+        "      <td>";
 //                                         *** PNG/SVG CONTENT ***
-static const QString HTML_END   = "      </td>"
-                                  "    </tr>"
-                                  "</table>"
-                                  "</body>"
-                                  "</html>";
+static const char HTML_END[] = "      </td>"
+                               "    </tr>"
+                               "</table>"
+                               "</body>"
+                               "</html>";
 
 /**
  * The preview widget based on a QwebView (SVG with drop shadows).
@@ -47,24 +48,42 @@ static const QString HTML_END   = "      </td>"
  * @brief PreviewWidgetWeb::PreviewWidgetWeb
  * @param parent
  */
-PreviewWidgetWeb::PreviewWidgetWeb(QWidget *parent)
-    : PreviewWidget(parent)
+PreviewWidgetWeb::PreviewWidgetWeb (QWidget *parent)
+    : PreviewWidget (parent)
 {
-    m_webView = new WebView(this);
-    m_webView->setPreviewWidgetWeb(this);
+    m_webView = new WebView (this);
+    m_webView->setPreviewWidgetWeb (this);
 
-    // make WebView resizable
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->addWidget(m_webView);
-    setLayout(layout);
+    connect (m_webView->page (), &QWebEnginePage::scrollPositionChanged, this,
+             [this](const QPointF &pos) { _scrollPos = pos; });
+    //    connect (m_webView, &QWebEngineView::loadFinished, this,
+    //             [this](bool f)
+    //    {
+    //        if (f && !_scrollPos.isNull ()) {
+    //            //            m_webView->page ()->runJavaScript (QString ("window.scrollTo(%1, %2);")
+    //            //                                               .arg (_scrollPos.x ()).arg (_scrollPos.y ()), QWebEngineScript::ApplicationWorld);
+    //        }
+    //    });
+
+    //    connect (m_webView, &QWebEngineView::loadProgress, this,
+    //             [this](int progress)
+    //    {
+    //        if (progress == 100)
+    //            m_webView->page ()->runJavaScript (QString ("window.scrollTo(%1, %2);")
+    //                                               .arg (_scrollPos.x ()).arg (_scrollPos.y ()), QWebEngineScript::ApplicationWorld);
+    //    });
+
+    //-- make WebView resizable
+    QVBoxLayout *layout = new QVBoxLayout ();
+    layout->addWidget (m_webView);
+    setLayout (layout);
 }
 
 // TODO: Remove!
-void PreviewWidgetWeb::setScrollArea (QScrollArea *scrollArea)
-{
-}
+void PreviewWidgetWeb::setScrollArea (QScrollArea */*scrollArea*/)
+{}
 
-void PreviewWidgetWeb::load(const QByteArray &data)
+void PreviewWidgetWeb::load (const QByteArray &data)
 {
     QByteArray content;
 
@@ -144,28 +163,37 @@ void PreviewWidgetWeb::load(const QByteArray &data)
 
     // make the picture a little larger to prevent scrollbars => smaller scale factor
     {
-        if(m_width < 150)
+        if (m_width < 150)
             m_width  += 8;
         else
             m_width  += 16;
 
-        if(m_height < 200)
+        if (m_height < 200)
             m_height += 12;
         else
             m_height += 16;
     }
 
-    m_webView->setHtml(HTML_BEGIN + content + HTML_END, QUrl());
-    zoomImage();
-    update();
+    m_webView->setHtml (HTML_BEGIN + content + HTML_END, QUrl ());
+    zoomImage ();
+
+    //    if (!_scrollPos.isNull ())
+    //        m_webView->page ()->runJavaScript (QString ("window.scrollTo(%1, %2);")
+    //                                           .arg (_scrollPos.x ()).arg (_scrollPos.y ()), QWebEngineScript::ApplicationWorld);
+
+    //update ();
+
+    //    if (!_scrollPos.isNull ())
+    //        m_webView->page ()->runJavaScript (QString ("window.scrollTo(%1, %2);")
+    //                                           .arg (_scrollPos.x ()).arg (_scrollPos.y ()), QWebEngineScript::ApplicationWorld);
 }
 
-void PreviewWidgetWeb::setZoomScale(int zoom_scale)
+void PreviewWidgetWeb::setZoomScale (int zoom_scale)
 {
     if (m_zoomScale != zoom_scale) {
         m_zoomScale = zoom_scale;
-        zoomImage();
-        update();
+        zoomImage ();
+        //update ();
     }
 }
 
@@ -212,41 +240,40 @@ void PreviewWidgetWeb::zoomFitHeight()
 //a1e
 void PreviewWidgetWeb::wheelEvent(QWheelEvent *e)
 {
-  if( e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
-    onWheelZoom(e, 8);
-  }
-  else if( e->modifiers() == (Qt::ControlModifier | Qt::AltModifier) ) {
-    onWheelZoom(e, 1);
-  }
-  else if( e->modifiers() == Qt::ControlModifier) {
-    onWheelZoom(e, 4);
-  }
+    if( e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
+        onWheelZoom(e, 8);
+    }
+    else if( e->modifiers() == (Qt::ControlModifier | Qt::AltModifier) ) {
+        onWheelZoom(e, 1);
+    }
+    else if( e->modifiers() == Qt::ControlModifier) {
+        onWheelZoom(e, 4);
+    }
 }
 
-void PreviewWidgetWeb::onWheelZoom(QWheelEvent *e, const int steps)
+void PreviewWidgetWeb::onWheelZoom (QWheelEvent *e, const int steps)
 {
-  if(e->delta() > 0) {
-    for(int i = steps; i > 0; --i) zoomIn();
-  }
-  else {
-    for(int i = steps; i > 0; --i) zoomOut();
-  }
-  e->accept();
+    if (e->delta () > 0)
+        for (int i = steps; i > 0; --i)
+            zoomIn ();
+    else
+        for (int i = steps; i > 0; --i)
+            zoomOut ();
+    e->accept ();
 }
 
 // TODO: Remove!
-void PreviewWidgetWeb::onWheelScroll(QWheelEvent *e)
-{
-}
+void PreviewWidgetWeb::onWheelScroll (QWheelEvent */*e*/)
+{}
 
 // TODO: Remove!
-void PreviewWidgetWeb::paintEvent(QPaintEvent *)
+void PreviewWidgetWeb::paintEvent (QPaintEvent *)
 {
     //m_webView->resize(this->size());
 }
 
-void PreviewWidgetWeb::zoomImage()
+void PreviewWidgetWeb::zoomImage ()
 {
-    qreal zoom = qreal(m_zoomScale) / 100; // 200 -> 2.00 = double size
-    m_webView->setZoomFactor(zoom);
+    qreal zoom = qreal (m_zoomScale) / 100; // 200 -> 2.00 = double size
+    m_webView->setZoomFactor (zoom);
 }

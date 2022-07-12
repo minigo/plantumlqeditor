@@ -13,17 +13,17 @@
 class QWebView;
 class PreviewWidgetWeb;
 
-class WebView : public QWebView
+class WebView : public QWebEngineView
 {
     Q_OBJECT
 public:
 
-    explicit WebView(QWidget *parent = 0);
-    void setPreviewWidgetWeb(PreviewWidgetWeb *previewWidgetWeb);
+    explicit WebView (QWidget *parent = 0);
+    void setPreviewWidgetWeb (PreviewWidgetWeb *previewWidgetWeb);
 
 public slots:
 
-    void wheelEvent(QWheelEvent *e);
+    void wheelEvent (QWheelEvent *e);
 
 protected:
 

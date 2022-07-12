@@ -1,6 +1,6 @@
 ﻿#include "src/webview.h"
 
-#include "src/mainwindow.h"
+//#include "src/mainwindow.h"
 
 #include <QDebug>
 #include <QWheelEvent>
@@ -36,9 +36,9 @@ void WebView::setPreviewWidgetWeb(PreviewWidgetWeb *previewWidgetWeb)
  */
 void WebView::wheelEvent(QWheelEvent *e)
 {
-  e->ignore();
-  m_previewWidgetWeb->wheelEvent(e);
-  if(e->isAccepted()) return;
+    e->ignore();
+    m_previewWidgetWeb->wheelEvent(e);
+    if(e->isAccepted()) return;
 
-  QWebView::wheelEvent(e);
+    QWebView::wheelEvent(e);
 }
