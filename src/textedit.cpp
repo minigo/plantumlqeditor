@@ -98,73 +98,73 @@ void TextEdit::keyPressEvent (QKeyEvent *e)
 
     switch (e->key ())
     {
-    case Qt::Key_Down:
-        if(e->modifiers () == (Qt::ControlModifier | Qt::AltModifier))
-        {
-            // duplicate line
+    //    case Qt::Key_Down:
+    //        if(e->modifiers () & Qt::AltModifier)
+    //        {
+    //            //-- duplicate line
 
-            cursor = textCursor();
-            cursor.beginEditBlock();
-            cursor.movePosition(QTextCursor::StartOfLine);
-            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-            if(!cursor.hasSelection()) break;
-            QString line = cursor.selectedText();
-            cursor.insertText(line);
-            cursor.insertText("\n");
-            cursor.insertText(line);
-            cursor.endEditBlock();
+    //            cursor = textCursor();
+    //            cursor.beginEditBlock();
+    //            cursor.movePosition(QTextCursor::StartOfLine);
+    //            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    //            if(!cursor.hasSelection()) break;
+    //            QString line = cursor.selectedText();
+    //            cursor.insertText(line);
+    //            cursor.insertText("\n");
+    //            cursor.insertText(line);
+    //            cursor.endEditBlock();
 
-            e->accept();
-        }
-        else if (e->modifiers () == (Qt::ControlModifier | Qt::ShiftModifier))
-        {
-            // move line down
+    //            e->accept ();
+    //        }
+    //        else if (e->modifiers () & Qt::ControlModifier)
+    //        {
+    //            //-- move line down
 
-            cursor = textCursor();
-            cursor.beginEditBlock();
-            cursor.movePosition(QTextCursor::StartOfLine);
-            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-            if(!cursor.hasSelection()) break;
-            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
-            QString line = cursor.selectedText();
-            cursor.removeSelectedText();
-            //                cursor.movePosition(QTextCursor::Down);
-            cursor.insertText(line);
-            cursor.endEditBlock();
-            setFocus();
+    //            cursor = textCursor();
+    //            cursor.beginEditBlock();
+    //            cursor.movePosition(QTextCursor::StartOfLine);
+    //            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    //            if(!cursor.hasSelection()) break;
+    //            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
+    //            QString line = cursor.selectedText();
+    //            cursor.removeSelectedText();
+    //            //                cursor.movePosition(QTextCursor::Down);
+    //            cursor.insertText(line);
+    //            cursor.endEditBlock();
+    //            setFocus();
 
-            e->accept();
-        }
+    //            e->accept ();
+    //        }
 
-        break;
+    //        break;
 
-    case Qt::Key_Up:
-        if (e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-        {
-            // move line up
+    //    case Qt::Key_Up:
+    //        if (e->modifiers() & Qt::ControlModifier)
+    //        {
+    //            //-- move line up
 
-            cursor = textCursor();
-            cursor.beginEditBlock();
-            cursor.movePosition(QTextCursor::StartOfLine);
-            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-            if(!cursor.hasSelection()) break;
-            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
-            QString line = cursor.selectedText();
-            cursor.removeSelectedText();
-            cursor.movePosition(QTextCursor::Up);
-            cursor.insertText(line);
-            //cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, 4);
-            //                cursor.movePosition(QTextCursor::Up);
-            //                cursor.movePosition(QTextCursor::Up);
-            //                cursor.movePosition(QTextCursor::Up);
-            //                cursor.movePosition(QTextCursor::Up);
-            cursor.endEditBlock();
-            setFocus();
+    //            cursor = textCursor();
+    //            cursor.beginEditBlock();
+    //            cursor.movePosition(QTextCursor::StartOfLine);
+    //            cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    //            if(!cursor.hasSelection()) break;
+    //            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor);
+    //            QString line = cursor.selectedText();
+    //            cursor.removeSelectedText();
+    //            cursor.movePosition(QTextCursor::Up);
+    //            cursor.insertText(line);
+    //            //cursor.movePosition(QTextCursor::Up, QTextCursor::MoveAnchor, 4);
+    //            //                cursor.movePosition(QTextCursor::Up);
+    //            //                cursor.movePosition(QTextCursor::Up);
+    //            //                cursor.movePosition(QTextCursor::Up);
+    //            //                cursor.movePosition(QTextCursor::Up);
+    //            cursor.endEditBlock();
+    //            setFocus();
 
-            e->accept();
-        }
+    //            e->accept ();
+    //        }
 
-        break;
+    //        break;
 
     case Qt::Key_Return:
     case Qt::Key_Enter:
@@ -172,6 +172,7 @@ void TextEdit::keyPressEvent (QKeyEvent *e)
         if (e->modifiers () & Qt::ControlModifier)
         {
             textCursor ().insertText ("\\n");
+            return;
         }
         else
         {
@@ -215,24 +216,19 @@ void TextEdit::keyPressEvent (QKeyEvent *e)
     {
         QString indentLine;
         if (_indentWithSpace)
-        {
             indentLine = indentLine.leftJustified (_indentSize, QChar (' '));
-        }
         else
-        {
-            indentLine = QChar('\t');
-        }
+            indentLine = QChar ('\t');
 
         textCursor ().insertText (indentLine);
-
         break;
     }
     }
 
-    QPlainTextEdit::keyPressEvent(e);
+    QPlainTextEdit::keyPressEvent (e);
 }
 
-void TextEdit::paintEvent(QPaintEvent *e)
+void TextEdit::paintEvent (QPaintEvent *e)
 {
     // Update tab stops
     QString indentLine = QString().leftJustified(_indentSize, QChar(' '));
@@ -241,7 +237,7 @@ void TextEdit::paintEvent(QPaintEvent *e)
     QPlainTextEdit::paintEvent(e);
 }
 
-void TextEdit::resizeEvent(QResizeEvent *e)
+void TextEdit::resizeEvent (QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
 
@@ -250,13 +246,13 @@ void TextEdit::resizeEvent(QResizeEvent *e)
 }
 
 // a1e
-void TextEdit::wheelEvent(QWheelEvent *e)
+void TextEdit::wheelEvent (QWheelEvent *e)
 {
     const int MIN_FONTSIZE = 6;
     const int MAX_FONTSIZE = 80;
 
     int step = 0;
-    if( e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
+    if (e->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
         step = 8;
     }
     else if( e->modifiers() == (Qt::ControlModifier | Qt::AltModifier) ) {
